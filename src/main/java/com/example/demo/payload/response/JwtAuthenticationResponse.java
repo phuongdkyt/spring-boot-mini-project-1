@@ -1,21 +1,20 @@
 package com.example.demo.payload.response;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class JwtAuthenticationResponse {
+    private Integer id;
+    private String email;
+    private List<String> roles;
     private String accessToken;
     private String tokenType = "Bearer";
-    private List<String> roles;
-
-    public JwtAuthenticationResponse(String accessToken, String tokenType, List<String> roles) {
-        this.accessToken = accessToken;
-        this.tokenType = tokenType;
-        this.roles = roles;
-    }
-
-    public JwtAuthenticationResponse() {
-    }
 }
