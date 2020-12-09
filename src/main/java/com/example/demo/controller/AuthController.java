@@ -7,7 +7,7 @@ import com.example.demo.exception.AppException;
 import com.example.demo.payload.request.LoginRequest;
 import com.example.demo.payload.request.SignupRequest;
 import com.example.demo.payload.response.JwtAuthenticationResponse;
-import com.example.demo.payload.response.JwtResponse;
+import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
@@ -21,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,16 +80,12 @@ public class AuthController {
 
     @PostMapping("/signup")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity(new JwtResponse(false, "Username already taken"), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return new ResponseEntity(new MessageResponse(false, "Email is already taken"), HttpStatus.BAD_REQUEST);
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity(new JwtResponse(false, "Email is already taken"), HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new User(signUpRequest.getEmail(), signUpRequest.getPassword());
+        User user = new User(signupRequest.getEmail(), signupRequest.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 
@@ -100,11 +95,7 @@ public class AuthController {
 
         User result = userRepository.save(user);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/api/users/{email}")
-                .buildAndExpand(result.getEmail()).toUri();
-
-        return ResponseEntity.created(location).body(new JwtResponse(true, "User registered successfully"));
+        return ResponseEntity.ok(new MessageResponse(true, "User registered successfully"));
 
     }
 }

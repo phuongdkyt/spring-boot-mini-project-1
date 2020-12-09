@@ -1,10 +1,10 @@
 package com.example.demo.payload.response;
 
-public class JwtResponse {
+public class MessageResponse {
     public Boolean success;
     public String message;
 
-    public JwtResponse(Boolean success, String message) {
+    public MessageResponse(Boolean success, String message) {
         this.success = success;
         this.message = message;
     }
