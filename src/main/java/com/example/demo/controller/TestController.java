@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @GetMapping("/api/test")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyRole()")
     public String allAccess() {
         return ">>> All Contents!";
     }
