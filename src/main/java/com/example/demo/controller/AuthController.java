@@ -11,9 +11,11 @@ import com.example.demo.payload.response.JwtResponse;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,19 +65,22 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        List<String> roles = userPrincipal.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         JwtAuthenticationResponse jar = new JwtAuthenticationResponse();
         jar.setAccessToken(jwt);
         jar.setRoles(roles);
+        jar.setId(userPrincipal.getId());
+        jar.setEmail(userPrincipal.getEmail());
 
         return ResponseEntity.ok(jar);
     }
 
     @PostMapping("/signup")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return new ResponseEntity(new JwtResponse(false, "Username already taken"), HttpStatus.BAD_REQUEST);
