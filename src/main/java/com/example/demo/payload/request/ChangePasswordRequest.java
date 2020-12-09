@@ -11,11 +11,11 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Getter
 @Setter
-public class LoginRequest {
+public class ChangePasswordRequest {
 
     @NotBlank
-    private String email;
+    private String old_password;
 
     @NotBlank
-    private String password;
+    private String new_password;
 }
