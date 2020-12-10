@@ -2,9 +2,9 @@ package com.example.demo.payload.response;
 
 public class MessageResponse {
     public Boolean success;
-    public String message;
+    public Object message;
 
-    public MessageResponse(Boolean success, String message) {
+    public MessageResponse(Boolean success, Object message) {
         this.success = success;
         this.message = message;
     }
@@ -17,11 +17,11 @@ public class MessageResponse {
         this.success = success;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(Object message) {
         this.message = message;
     }
 }
