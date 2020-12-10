@@ -14,13 +14,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Role {
+public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @Enumerated(EnumType.STRING)
     @NaturalId
     @Column(unique = true, length = 60)
-    private RoleName name;
+    private String name;
 }

@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.User;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.payload.request.ChangePasswordRequest;
 import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.security.UserPrincipal;
-import com.example.demo.service.UserService;
+import com.example.demo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +33,10 @@ public class AccountController {
         if (null == userPrincipal) {
             return new ResponseEntity(new MessageResponse(false, "Cannot find user info"), HttpStatus.BAD_REQUEST);
         }
-        User user = user = userService.findUserById(userPrincipal.getId());
 
-        return new ResponseEntity(user, HttpStatus.OK);
+        UserEntity userEntity = userService.findById(userPrincipal.getId());
+
+        return new ResponseEntity(userEntity, HttpStatus.OK);
     }
 
     @PutMapping("/password")
@@ -43,23 +44,23 @@ public class AccountController {
         userPrincipal =
                 (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        User user = user = userService.findUserById(userPrincipal.getId());
+        UserEntity userEntity = userEntity = userService.findById(userPrincipal.getId());
 
-        if (!passwordEncoder.matches(changePasswordRequest.getOld_password(), user.getPassword())) {
+        if (!passwordEncoder.matches(changePasswordRequest.getOld_password(), userEntity.getPassword())) {
             return new ResponseEntity(new MessageResponse(false, "Old password does not match"),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (passwordEncoder.matches(changePasswordRequest.getNew_password(), user.getPassword()) || passwordEncoder.matches(changePasswordRequest.getNew_password(), changePasswordRequest.getOld_password())) {
+        if (passwordEncoder.matches(changePasswordRequest.getNew_password(), userEntity.getPassword()) || passwordEncoder.matches(changePasswordRequest.getNew_password(), changePasswordRequest.getOld_password())) {
             return new ResponseEntity(new MessageResponse(false, "New password cannot be the same as old password"),
                     HttpStatus.BAD_REQUEST);
         }
 
-        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNew_password()));
+        userEntity.setPassword(passwordEncoder.encode(changePasswordRequest.getNew_password()));
 
         System.out.println(passwordEncoder.encode(changePasswordRequest.getNew_password()));
 
-        userService.save(user);
+        userService.save(userEntity);
 
         return new ResponseEntity(new MessageResponse(true, "You have successfully changed your password"), HttpStatus.OK);
     }
