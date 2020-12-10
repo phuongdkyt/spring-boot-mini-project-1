@@ -1,8 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Role;
-import com.example.demo.entity.RoleName;
-import com.example.demo.entity.User;
+import com.example.demo.entity.RoleEntity;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.exception.AppException;
 import com.example.demo.payload.request.LoginRequest;
 import com.example.demo.payload.request.SignupRequest;
@@ -15,7 +14,6 @@ import com.example.demo.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,10 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +50,7 @@ public class AuthController {
     JwtTokenProvider tokenProvider;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -79,21 +75,20 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             return new ResponseEntity(new MessageResponse(false, "Email is already taken"), HttpStatus.BAD_REQUEST);
         }
 
-        User user = new User(signupRequest.getEmail(), signupRequest.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        UserEntity userEntity = new UserEntity(signupRequest.getEmail(), signupRequest.getPassword());
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
 
-
-        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+        RoleEntity userRoleEntity = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new AppException("User Role not set"));
-        user.setRoles(Collections.singleton(userRole));
+        userEntity.setRoleEntities(Collections.singleton(userRoleEntity));
 
-        User result = userRepository.save(user);
+        UserEntity result = userRepository.save(userEntity);
 
         return ResponseEntity.ok(new MessageResponse(true, "User registered successfully"));
 

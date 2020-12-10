@@ -1,6 +1,6 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
-import com.example.demo.entity.User;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(
+        UserEntity user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with email :" + email)
         );
 
@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Transactional
     public UserDetails loadUserById(Integer id) {
-        User user = userRepository.findById(id).orElseThrow(
+        UserEntity user = userRepository.findById(id).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with id" + id)
         );
 
