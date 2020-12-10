@@ -11,7 +11,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -48,11 +50,17 @@ public class UserEntity {
     @JoinColumn(name = "user_id", nullable = true)
     private UserEntity user;
 
-//    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
-//    private List<Post> post;
-//
-//    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
-//    private List<Comment> comment;
+    @OneToMany(mappedBy = "user")
+    private List<QuestionEntity> questionEntityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<TaskEntity> taskEntityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<TestEntity> testEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserTestEntity> userTestEntityList = new ArrayList<>();
 
     public UserEntity() {
     }
