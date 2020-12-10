@@ -1,11 +1,8 @@
 package com.example.demo.entity;
 
 
-import com.example.demo.entity.audit.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
@@ -24,10 +21,10 @@ import java.util.Set;
 })
 @Getter
 @Setter
-public class User extends DateAudit {
+public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NaturalId
@@ -44,7 +41,12 @@ public class User extends DateAudit {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<RoleEntity> roleEntities = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    private UserEntity user;
 
 //    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
 //    private List<Post> post;
@@ -52,18 +54,20 @@ public class User extends DateAudit {
 //    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
 //    private List<Comment> comment;
 
-    public User() {
+    public UserEntity() {
     }
 
-    public User(String email, String password) {
+    public UserEntity(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public User(Integer id, @Size(max = 40) @NotBlank @Email String email, @NotBlank @Size(max = 100) String password, Set<Role> roles) {
+    public UserEntity(Integer id, @Size(max = 40) @NotBlank @Email String email, @NotBlank @Size(max = 100) String password, Set<RoleEntity> roleEntities) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.roles = roles;
+        this.roleEntities = roleEntities;
     }
+
+
 }

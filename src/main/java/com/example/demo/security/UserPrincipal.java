@@ -1,6 +1,6 @@
 package com.example.demo.security;
 
-import com.example.demo.entity.User;
+import com.example.demo.entity.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,15 +30,15 @@ public class UserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserPrincipal create(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
-                new SimpleGrantedAuthority(role.getName().name())
+    public static UserPrincipal create(UserEntity userEntity) {
+        List<GrantedAuthority> authorities = userEntity.getRoleEntities().stream().map(role ->
+                new SimpleGrantedAuthority(role.getName())
         ).collect(Collectors.toList());
 
         return new UserPrincipal(
-                user.getId(),
-                user.getEmail(),
-                user.getPassword(),
+                userEntity.getId(),
+                userEntity.getEmail(),
+                userEntity.getPassword(),
                 authorities
         );
     }
