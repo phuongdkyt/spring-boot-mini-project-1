@@ -20,6 +20,7 @@ public class TestEntity {
     private String testName;
     @Column(nullable = false)
     private Integer testTime;
+    @Temporal(TemporalType.DATE)
     private Date testDate;
 
     @OneToMany(mappedBy = "test")
