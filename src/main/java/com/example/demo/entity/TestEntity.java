@@ -10,8 +10,9 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "tbl_test")
+@Table(name = "tbl_tests")
 public class TestEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
