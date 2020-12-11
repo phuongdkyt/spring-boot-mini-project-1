@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "tbl_test")
+@Table(name = "tbl_tests")
 public class TestEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +19,7 @@ public class TestEntity {
     private String testName;
     @Column(nullable = false)
     private Integer testTime;
+    @Temporal(TemporalType.DATE)
     private Date testDate;
 
     @OneToMany(mappedBy = "test")
