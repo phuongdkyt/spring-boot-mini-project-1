@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +21,12 @@ public class QuestionService implements IQuestionService {
     private QuestionRepository questionRepository;
     @Autowired
     private UserRepository userRepository;
+
     @Override
-    public List<QuestionEntity> findAll() {
-        return questionRepository.findAll();
+    public ResponseEntity<?> findAll() {
+        HashMap<String, List<QuestionEntity>> listHashMap = new HashMap<>();
+        listHashMap.put("result", questionRepository.findAll());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(listHashMap);
     }
 
     @Override
@@ -37,7 +41,8 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
-    public ResponseEntity<?> save( QuestionEntity question,Integer id) {
+    public ResponseEntity<?> save(QuestionEntity question, Integer id) {
+
         Optional<QuestionEntity> questionCurrent = questionRepository.findById(id);
 //        QuestionEntity questionEntity;
         if (questionCurrent.isPresent()) {
@@ -56,20 +61,20 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
-    public ResponseEntity<?> saveAll(List<QuestionEntity> questionEntityList,Character lv) {
-        Optional<UserEntity> userEntity =userRepository.findById(1);
+    public ResponseEntity<?> saveAll(List<QuestionEntity> questionEntityList, Character lv) {
 
-        ;       for(int i=0;i<questionEntityList.size();i++){
+        Optional<UserEntity> userEntity = userRepository.findById(1);
+
+        for (int i = 0; i < questionEntityList.size(); i++) {
             questionEntityList.get(i).setUser(userEntity.get());
             questionEntityList.get(i).setLevel(lv);
-            if(questionEntityList.get(i).getAnswer()==null)
+            if (questionEntityList.get(i).getAnswer() == null)
                 questionEntityList.get(i).setQuestionType("TL");
             else
                 questionEntityList.get(i).setQuestionType("TN");
-
         }
         questionRepository.saveAll(questionEntityList);
 
-        return  new ResponseEntity("Lưu danh sách hỏi thành công",HttpStatus.OK);
+        return new ResponseEntity("Lưu danh sách hỏi thành công", HttpStatus.OK);
     }
 }
