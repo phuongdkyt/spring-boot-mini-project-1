@@ -12,5 +12,5 @@ public interface RoleRepository extends JpaRepository<RoleEntity, Integer> {
 
     Optional<RoleEntity> findByName(String roleName);
 
-    Boolean existsByName(String roleName);
+    boolean existsByName(String roleName);
 }
