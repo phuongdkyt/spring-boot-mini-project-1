@@ -1,5 +1,7 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.common.Common;
+import com.example.demo.common.Constants;
 import com.example.demo.entity.QuestionEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.payload.response.MessageResponse;
@@ -11,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,10 +24,9 @@ public class QuestionService implements IQuestionService {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<?> findAll() {
-        HashMap<String, List<QuestionEntity>> listHashMap = new HashMap<>();
-        listHashMap.put("result", questionRepository.findAll());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(listHashMap);
+    public List<QuestionEntity> findAll() {
+        return questionRepository.findAll();
+
     }
 
     @Override
@@ -35,13 +35,12 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
-    public ResponseEntity<?> deleteById(Integer id) {
+    public void deleteById(Integer id) {
         questionRepository.deleteById(id);
-        return new ResponseEntity(new MessageResponse(true, "Xoá câu hỏi thành công"), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> save(QuestionEntity question, Integer id) {
+    public void save(QuestionEntity question, Integer id) {
 
         Optional<QuestionEntity> questionCurrent = questionRepository.findById(id);
 //        QuestionEntity questionEntity;
@@ -56,25 +55,22 @@ public class QuestionService implements IQuestionService {
             questionRepository.save(questionCurrent.get());
         }
 
-
-        return new ResponseEntity(new MessageResponse(true, "Lưu câu hỏi thành công"), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> saveAll(List<QuestionEntity> questionEntityList, Character lv) {
+    public void saveAll(List<QuestionEntity> questionEntityList, Character lv) {
 
         Optional<UserEntity> userEntity = userRepository.findById(1);
 
         for (int i = 0; i < questionEntityList.size(); i++) {
             questionEntityList.get(i).setUser(userEntity.get());
             questionEntityList.get(i).setLevel(lv);
-            if (questionEntityList.get(i).getAnswer() == null)
-                questionEntityList.get(i).setQuestionType("TL");
+            if (Common.isNullOrEmpty(questionEntityList.get(i).getAnswer()))
+                questionEntityList.get(i).setQuestionType(Constants.TL);
             else
-                questionEntityList.get(i).setQuestionType("TN");
+                questionEntityList.get(i).setQuestionType(Constants.TN);
         }
         questionRepository.saveAll(questionEntityList);
 
-        return new ResponseEntity("Lưu danh sách hỏi thành công", HttpStatus.OK);
     }
 }
