@@ -20,7 +20,9 @@ public class UserTestEntity {
 
    @JsonIgnore
    @ManyToOne
-   @JoinColumn(name = "test_entity")
+   @JoinColumn(name = "test_id")
    private TestEntity test;
 
+   @OneToOne(mappedBy = "userTest")
+   private TaskEntity task;
 }

@@ -23,8 +23,6 @@ public class TestEntity {
     @Temporal(TemporalType.DATE)
     private Date testDate;
 
-    @OneToMany(mappedBy = "test")
-    List<TaskEntity> taskEntityList=new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne

@@ -23,4 +23,7 @@ public class QuestionTestEntity {
     @ManyToOne
     @JoinColumn(name = "question_id")
     private QuestionEntity question;
+
+    @OneToOne(mappedBy = "questionTest")
+    private TaskEntity task;
 }

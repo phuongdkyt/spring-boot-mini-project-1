@@ -13,22 +13,15 @@ public class TaskEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id ;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    UserEntity user;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "test_id")
-    TestEntity test;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    QuestionEntity question;
 
     @Column(nullable = false)
     private String taskAwnser;
 
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "user_test_id", referencedColumnName = "id")
+    private UserTestEntity userTest;
+
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "question_test_id", referencedColumnName = "id")
+    private QuestionTestEntity questionTest;
 }
