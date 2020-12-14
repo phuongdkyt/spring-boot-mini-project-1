@@ -96,7 +96,6 @@ public class AuthService implements IAuthService {
         }
         return userPrincipal;
     }
-
     @Override
     public ResponseEntity<?> changePassword(ChangePasswordRequest changePasswordRequest) {
         response = new HashMap<String, Object>();
