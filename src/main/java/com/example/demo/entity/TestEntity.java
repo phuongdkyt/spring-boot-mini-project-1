@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "tbl_tests")
 public class TestEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

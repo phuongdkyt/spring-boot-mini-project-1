@@ -154,7 +154,6 @@ public class UserService implements IUserService {
         if (userRepository.existsById(id)) {
             // Nếu id người dùng tồn tại thì xoá người dùng
             userRepository.deleteById(id);
-
             // Thông báo xoá người dùng thành công
             response.put("status", true);
             response.put("message", "Xoá người dùng thành công");
