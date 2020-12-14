@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,6 @@ public class QuestionService implements IQuestionService {
     @Override
     public List<QuestionEntity> findAll() {
         return questionRepository.findAll();
-
     }
 
     @Override
@@ -41,7 +41,6 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public void save(QuestionEntity question, Integer id) {
-
         Optional<QuestionEntity> questionCurrent = questionRepository.findById(id);
 //        QuestionEntity questionEntity;
         if (questionCurrent.isPresent()) {
@@ -71,6 +70,5 @@ public class QuestionService implements IQuestionService {
                 questionEntityList.get(i).setQuestionType(Constants.TN);
         }
         questionRepository.saveAll(questionEntityList);
-
     }
 }
