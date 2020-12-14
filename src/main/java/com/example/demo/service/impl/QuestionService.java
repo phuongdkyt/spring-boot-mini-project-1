@@ -26,12 +26,16 @@ public class QuestionService implements IQuestionService {
     @Override
     public List<QuestionEntity> findAll() {
         return questionRepository.findAll();
-
     }
 
     @Override
     public Optional<QuestionEntity> findById(Integer id) {
         return questionRepository.findById(id);
+    }
+
+    @Override
+    public List<QuestionEntity> findByQuestion(String name) {
+        return questionRepository.findByQuestionStartsWith(name);
     }
 
     @Override

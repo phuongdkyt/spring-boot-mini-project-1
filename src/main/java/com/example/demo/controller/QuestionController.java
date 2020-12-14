@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,8 +68,24 @@ public class QuestionController {
             response = new BaseMessage(Constants.ERROR_RESPONSE, "Không tìm thấy id câu hỏi", timeStamp);
             logger.error(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "findByid"));
         }
+        return response;
+    }
+
+    @GetMapping("/findbyname/{question}")
+    public BaseMessage findByQuestion(@PathVariable String question) {
 
 
+        BaseMessage response;
+        long timeStamp = Common.getTimeStamp();
+        try {
+            List<QuestionEntity> questionEntityList = questionService.findByQuestion(question);
+            response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, questionEntityList);
+            logger.info(Common.createMessageLog(question, response, Common.getUserName(), timeStamp, "findByQuestion"));
+
+        } catch (Exception e) {
+            response = new BaseMessage(Constants.ERROR_RESPONSE, "Không tìm thấy câu hỏi nào!", timeStamp);
+            logger.error(Common.createMessageLog(question, response, Common.getUserName(), timeStamp, "findByQuestion"));
+        }
         return response;
     }
 
@@ -81,7 +96,6 @@ public class QuestionController {
 //        long start = Common.getTimeStamp();
         try {
             Optional<QuestionEntity> questionEntity = questionService.findById(id);
-
             response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Sửa Thành công", timeStamp);
             questionService.save(question, id);
             logger.info(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "save"));

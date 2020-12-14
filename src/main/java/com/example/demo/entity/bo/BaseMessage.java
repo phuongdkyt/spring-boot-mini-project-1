@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseMessage{
-    private Long errorCode; // 0 - thanh cong, 1 - that bai
+    private Boolean status; // 0 - thanh cong, 1 - that bai
     private String message; // mo ta loi
     private long timestamp;
 
