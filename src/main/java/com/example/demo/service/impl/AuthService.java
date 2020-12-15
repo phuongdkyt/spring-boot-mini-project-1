@@ -1,11 +1,11 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.common.Common;
 import com.example.demo.entity.RoleEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.payload.request.ChangePasswordRequest;
 import com.example.demo.payload.request.LoginRequest;
 import com.example.demo.payload.request.SignupRequest;
-import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
@@ -46,7 +46,7 @@ public class AuthService implements IAuthService {
     private UserPrincipal userPrincipal;
 
     @Override
-    public ResponseEntity<?> login(LoginRequest loginRequest) {
+    public HashMap<String, Object> login(LoginRequest loginRequest) {
         response = new HashMap<String, Object>();
 
         Authentication authentication = authenticationManager.authenticate(
@@ -57,60 +57,48 @@ public class AuthService implements IAuthService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
-
-        response.put("status", true);
+        userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        response.put("id",userPrincipal.getId());
+        response.put("email",userPrincipal.getEmail());
         response.put("accessToken", jwt);
         response.put("tokenType", "Bearer");
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return response;
     }
 
     @Override
-    public ResponseEntity<?> register(SignupRequest signupRequest) {
+    public HashMap<String, Object> register(SignupRequest signupRequest) {
+        response = new HashMap<String, Object>();
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return new ResponseEntity(new MessageResponse(false, "Email is already taken"), HttpStatus.BAD_REQUEST);
+            response.put("message", "Email is already taken");
+            return response;
         }
-
         UserEntity userEntity = new UserEntity(
                 signupRequest.getEmail(),
                 passwordEncoder.encode(signupRequest.getPassword())
         );
-
-        Optional<RoleEntity> roleEntity = roleRepository.findByName("ROLE_USER");
-
+        Optional<RoleEntity> roleEntity = roleRepository.findByName("ROLE_ADMIN");
         // Kiểm tra xem tên quyền có tồn tại không
         if (!roleEntity.isPresent()) {
             // Nếu không tìm thấy thì thông báo thất bại
-            response.put("status", false);
             response.put("message", "Không tìm thấy quyền này");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return response;
         }
-
         userRepository.save(userEntity);
-
-        response.put("status", true);
         response.put("message", "Đăng ký tài khoản thành công");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        return response;
     }
 
     @Override
-    public ResponseEntity<?> info() {
-        response = new HashMap<String, Object>();
-        userPrincipal =
-                (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserPrincipal info() {
+        userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (null == userPrincipal) {
-            // Nếu không tìm thấy thì thông báo thất bại
-            response.put("status", false);
-            response.put("message", "Không tìm thấy người dùng này");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        if (Common.isNullOrEmpty(userPrincipal)) {
+            return null;
         }
-
-        response.put("status", true);
-        response.put("data", userPrincipal);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return userPrincipal;
     }
-
     @Override
     public ResponseEntity<?> changePassword(ChangePasswordRequest changePasswordRequest) {
         response = new HashMap<String, Object>();

@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class SignupRequest {
     @NotBlank
     @Size(max = 40)
-    @Email
+    @Email(message = "Email should be valid")
     private String email;
 
     @NotBlank

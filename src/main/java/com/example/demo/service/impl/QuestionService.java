@@ -35,6 +35,11 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
+    public List<QuestionEntity> findByQuestion(String name) {
+        return questionRepository.findByQuestionStartsWith(name);
+    }
+
+    @Override
     public void deleteById(Integer id) {
         questionRepository.deleteById(id);
     }

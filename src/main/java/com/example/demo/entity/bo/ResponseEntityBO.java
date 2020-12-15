@@ -10,10 +10,10 @@ import lombok.Data;
 public class ResponseEntityBO<T> extends BaseMessage{
     private T result;
 
-    public ResponseEntityBO(Long errorResponse, String s, long timeStamp) {
+    public ResponseEntityBO(Boolean errorResponse, String s, long timeStamp) {
         super(errorResponse,s,timeStamp);
     }
-    public ResponseEntityBO(Long errorResponse, String s, long timeStamp,T result) {
+    public ResponseEntityBO(Boolean errorResponse, String s, long timeStamp,T result) {
         super(errorResponse,s,timeStamp);
         this.result=result;
     }

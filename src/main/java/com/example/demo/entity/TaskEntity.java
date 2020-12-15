@@ -12,23 +12,23 @@ public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id ;
+    private  Integer status_result;
+    private  Integer status_notice;
+
+    @Column(nullable = false)
+    private String taskAwnser;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "question_test_id")
+    private QuestionTestEntity questionTest;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
-    UserEntity user;
+    private UserEntity user;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "test_id")
-    TestEntity test;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    QuestionEntity question;
-
-    @Column(nullable = false)
-    private String taskAwnser;
+    @OneToOne(mappedBy = "task")
+    private ResultEntity result;
 
 }

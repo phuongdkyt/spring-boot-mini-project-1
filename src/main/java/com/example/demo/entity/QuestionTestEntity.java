@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,8 +20,12 @@ public class QuestionTestEntity {
     @JoinColumn(name = "test_id")
     private TestEntity test;
 
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "question_id")
     private QuestionEntity question;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "questionTest")
+    private List<TaskEntity> taskEntityList;
 }
