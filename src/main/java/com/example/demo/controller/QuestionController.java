@@ -5,6 +5,7 @@ import com.example.demo.common.Constants;
 import com.example.demo.entity.QuestionEntity;
 import com.example.demo.entity.bo.BaseMessage;
 import com.example.demo.entity.bo.ResponseEntityBO;
+import com.example.demo.service.IQuestionService;
 import com.example.demo.service.impl.QuestionService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @RequestMapping("/api/question")
 public class QuestionController {
     @Autowired
-    QuestionService questionService;
+    IQuestionService questionService;
     Logger logger = Logger.getLogger("QuestionController");
 
     @GetMapping

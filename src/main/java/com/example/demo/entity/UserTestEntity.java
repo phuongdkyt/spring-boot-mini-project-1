@@ -23,6 +23,7 @@ public class UserTestEntity {
    @JoinColumn(name = "test_id")
    private TestEntity test;
 
+
    @OneToOne(mappedBy = "userTest")
-   private TaskEntity task;
+   private ResultEntity result;
 }

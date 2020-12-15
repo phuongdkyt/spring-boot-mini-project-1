@@ -60,6 +60,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<UserTestEntity> userTestEntityList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<TaskEntity> taskEntityList = new ArrayList<>();
+
     public UserEntity() {
     }
 

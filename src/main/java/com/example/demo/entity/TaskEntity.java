@@ -12,16 +12,23 @@ public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id ;
-
+    private  Integer status_result;
+    private  Integer status_notice;
 
     @Column(nullable = false)
     private String taskAwnser;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "user_test_id", referencedColumnName = "id")
-    private UserTestEntity userTest;
-
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "question_test_id", referencedColumnName = "id")
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "question_test_id")
     private QuestionTestEntity questionTest;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
+    @OneToOne(mappedBy = "task")
+    private ResultEntity result;
+
 }
