@@ -57,7 +57,9 @@ public class AuthService implements IAuthService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
-
+        userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        response.put("id",userPrincipal.getId());
+        response.put("email",userPrincipal.getEmail());
         response.put("accessToken", jwt);
         response.put("tokenType", "Bearer");
 
@@ -84,6 +86,7 @@ public class AuthService implements IAuthService {
         }
         userRepository.save(userEntity);
         response.put("message", "Đăng ký tài khoản thành công");
+
         return response;
     }
 
