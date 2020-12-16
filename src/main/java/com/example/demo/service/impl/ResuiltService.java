@@ -28,7 +28,7 @@ public class ResuiltService implements IResultService {
     public String multipleChoiceAnswers(String testName) {
         userPrincipal =
                 (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<TaskEntity> taskEntityList = taskRepository.findAllByUser_Id(userPrincipal.getId());
+        List<TaskEntity> taskEntityList = taskRepository.findAllByUser_Id(3);
         TestEntity testEntity = testRepository.findByTestName(testName);
         List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
 
@@ -37,10 +37,16 @@ public class ResuiltService implements IResultService {
 
 
         for (int i = 0; i < questionTestEntityList.size(); i++) {
+//            System.out.println("-"+taskEntityList.get(i).getQuestionTest().getQuestion().getId());
+           System.out.println(questionTestEntityList.get(i).getQuestion().getQuestionType());
             if (questionTestEntityList.get(i).getQuestion().getQuestionType().equals(Constants.TN)) {
                 for (int j = 0; j < questionTestEntityList.size(); j++) {
+
                     if (taskEntityList.get(i).getQuestionTest().getQuestion().getId() == questionTestEntityList.get(j).getQuestion().getId()) {
-                        System.out.println(taskEntityList.get(i).getQuestionTest().getId() + "-" + questionTestEntityList.get(j).getQuestion().getId());
+                        System.out.println("+"+taskEntityList.get(i).getQuestionTest().getQuestion().getId());
+                        System.out.println(taskEntityList.get(i).getTaskAwnser());
+                        System.out.println("-"+questionTestEntityList.get(j).getQuestion().getId()+"-");
+                        System.out.println("-"+questionTestEntityList.get(j).getQuestion().getAnswer());
                         if (taskEntityList.get(i).getTaskAwnser().equals(questionTestEntityList.get(j).getQuestion().getAnswer())) {
                             trueQuestion++;
                             break;

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IQuestionService {
-    public ResponseEntity<?> findAll();
+    public List<QuestionEntity> findAll();
     public Optional<QuestionEntity> findById(Integer id);
     public List<QuestionEntity> findByQuestion(String name);
     public void deleteById(Integer id);

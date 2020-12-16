@@ -38,6 +38,8 @@ public class TaskService implements ITaskService {
                 (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         // Tìm kiếm người dùng theo id
         Optional<UserEntity> userEntity = userRepository.findById(userPrincipal.getId());
+        System.out.println(userPrincipal.getId());
+        System.out.println(userEntity.get().getId());
         //tim kiem ten bai thi
         TestEntity testEntity=testRepository.findByTestName(testName);
         //tim kiem theo id bai thi

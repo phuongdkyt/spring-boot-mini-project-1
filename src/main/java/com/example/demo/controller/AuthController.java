@@ -22,10 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.xml.ws.Response;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/api/auths")
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -77,7 +78,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-//    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public BaseMessage registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         BaseMessage response;
         long timeStamp = Common.getTimeStamp();

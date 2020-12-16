@@ -58,7 +58,7 @@ public class TestService implements ITestService {
     public ResponseEntity<?> updateTest(TestEntity testEntity, Integer id) {
         Optional<TestEntity> updateTest=testRepository.findById(id);
         if(updateTest.isPresent()){
-            updateTest.get().setUser(testEntity.getUser());
+//            updateTest.get().setUser(testEntity.getUser());
             updateTest.get().setTestTime(testEntity.getTestTime());
             updateTest.get().setTestDate(testEntity.getTestDate());
             updateTest.get().setTestName(testEntity.getTestName());
