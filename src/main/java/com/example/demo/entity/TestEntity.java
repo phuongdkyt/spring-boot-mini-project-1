@@ -24,7 +24,7 @@ public class TestEntity {
     @Column(nullable = false)
     private Integer testTime;
     @Temporal(TemporalType.DATE)
-    private Date testDate;
+    private Date testDate;//
 
 
 
