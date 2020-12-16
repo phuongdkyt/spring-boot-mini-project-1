@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +22,10 @@ public class TestService implements ITestService {
     @Autowired
     UserRepository userRepository;
     @Override
-    public List<TestEntity> findAll() {
-        return testRepository.findAll();
+    public ResponseEntity<?> findAll() {
+        HashMap<String,List<TestEntity>> list =new HashMap<>();
+        list.put("result",testRepository.findAll());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
     }
 
     @Override
@@ -49,6 +52,19 @@ public class TestService implements ITestService {
     public ResponseEntity<?> deleteTestById(Integer id) {
         testRepository.deleteById(id);
         return new ResponseEntity(new MessageResponse(true, "Xóa thành công"), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> updateTest(TestEntity testEntity, Integer id) {
+        Optional<TestEntity> updateTest=testRepository.findById(id);
+        if(updateTest.isPresent()){
+            updateTest.get().setUser(testEntity.getUser());
+            updateTest.get().setTestTime(testEntity.getTestTime());
+            updateTest.get().setTestDate(testEntity.getTestDate());
+            updateTest.get().setTestName(testEntity.getTestName());
+            testRepository.save(updateTest.get());
+        }
+        return new ResponseEntity(new MessageResponse(true,"Cập nhật thành công"),HttpStatus.OK);
     }
 
 
