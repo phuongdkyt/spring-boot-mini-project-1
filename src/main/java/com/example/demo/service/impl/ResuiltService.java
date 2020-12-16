@@ -32,7 +32,7 @@ public class ResuiltService implements IResultService {
         TestEntity testEntity = testRepository.findByTestName(testName);
         List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
 
-        int size = questionTestEntityList.size();
+        int size = questionTestEntityList.size();//
         int trueQuestion = 0;
 
 
