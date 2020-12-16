@@ -32,11 +32,11 @@ public class TestService implements ITestService {
 
     @Override
     public ResponseEntity<?> saveAll(List<TestEntity> testEntities) {
-        Optional<UserEntity> userEntity=userRepository.findById(1);
-        for (int i=0;i<testEntities.size();i++){
-            testEntities.get(i).setUser(userEntity.get());
-        }
-        testRepository.saveAll(testEntities);
+//        Optional<UserEntity> userEntity=userRepository.findById(1);
+//        for (int i=0;i<testEntities.size();i++){
+//            testEntities.get(i).setUser(userEntity.get());
+//        }
+//        testRepository.saveAll(testEntities);
         return  new ResponseEntity("Tạo bài thi thành công", HttpStatus.OK);
     }
 

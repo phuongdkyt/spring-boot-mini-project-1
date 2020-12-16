@@ -16,7 +16,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api/question")
+@RequestMapping("/api/questions")
 public class QuestionController {
     @Autowired
     IQuestionService questionService;
