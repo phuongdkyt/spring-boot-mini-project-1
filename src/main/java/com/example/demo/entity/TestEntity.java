@@ -2,13 +2,16 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tbl_tests")
 public class TestEntity {
@@ -21,13 +24,10 @@ public class TestEntity {
     @Column(nullable = false)
     private Integer testTime;
     @Temporal(TemporalType.DATE)
-    private Date testDate;
+    private Date testDate;//
 
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    UserEntity user;
+
 
     @OneToMany(mappedBy = "test")
     private List<UserTestEntity> userTestEntityList=new ArrayList<>();
@@ -35,4 +35,6 @@ public class TestEntity {
     @OneToMany(mappedBy = "test")
     private List<QuestionTestEntity> questionTestEntityList=new ArrayList<>();
 
+    @OneToOne(mappedBy = "test")
+    private ResultEntity result;
 }

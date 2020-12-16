@@ -7,7 +7,7 @@ import com.example.demo.payload.request.ResultEssayRequest;
 import java.util.List;
 
 public interface ITaskService {
-    public String multipleChoiceResultTask(List<QuestionEntity> questionEntityList);
-    public String essayTask(List<ResultEssayRequest> essayRequest);
+    public String sendAnswer(List<QuestionEntity> questionEntityList,String testName);
+
 }
 

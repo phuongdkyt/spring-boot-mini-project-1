@@ -2,18 +2,20 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tbl_tasks")
 public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id ;
-    private  Integer status_result;
-    private  Integer status_notice;
+
 
     @Column(nullable = false)
     private String taskAwnser;
@@ -28,7 +30,6 @@ public class TaskEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(mappedBy = "task")
-    private ResultEntity result;
+
 
 }

@@ -24,6 +24,6 @@ public class UserTestEntity {
    private TestEntity test;
 
 
-   @OneToOne(mappedBy = "userTest")
-   private ResultEntity result;
+//   @OneToOne(mappedBy = "userTest")
+//   private ResultEntity result;
 }

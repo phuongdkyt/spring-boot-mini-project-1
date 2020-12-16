@@ -25,7 +25,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auths")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -77,7 +77,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-//    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER')")
     public BaseMessage registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         BaseMessage response;
         long timeStamp = Common.getTimeStamp();
