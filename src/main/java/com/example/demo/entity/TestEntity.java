@@ -35,6 +35,7 @@ public class TestEntity {
     @OneToMany(mappedBy = "test")
     private List<QuestionTestEntity> questionTestEntityList=new ArrayList<>();
 
-    @OneToOne(mappedBy = "test")
-    private ResultEntity result;
+    @OneToMany(mappedBy = "test")
+    private List<TaskEntity> taskEntityList=new ArrayList<>();
+
 }

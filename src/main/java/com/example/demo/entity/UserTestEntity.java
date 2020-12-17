@@ -23,6 +23,8 @@ public class UserTestEntity {
    @JoinColumn(name = "test_id")
    private TestEntity test;
 
+   private  Integer status_result;
+   private  Integer status_notice;
 
 //   @OneToOne(mappedBy = "userTest")
 //   private ResultEntity result;

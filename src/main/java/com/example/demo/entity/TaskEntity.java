@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +13,7 @@ import javax.persistence.*;
 public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id ;
+    private Integer id;
 
 
     @Column(nullable = false)
@@ -29,7 +28,11 @@ public class TaskEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "test_id")
+    private TestEntity test;
 
-
+    private Double mark;
 
 }
