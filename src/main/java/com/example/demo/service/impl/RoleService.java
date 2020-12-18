@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.RoleEntity;
-import com.example.demo.exception.AppException;
 import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.service.IRoleService;
@@ -28,8 +27,6 @@ public class RoleService implements IRoleService {
     }
 
     public ResponseEntity<?> save(RoleEntity role) {
-        RoleEntity roleEntity = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new AppException("User Role not set"));
 
         roleRepository.save(role);
 

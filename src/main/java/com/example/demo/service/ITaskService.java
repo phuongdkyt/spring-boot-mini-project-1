@@ -12,8 +12,8 @@ public interface ITaskService {
     public NoticeOutput getNotice(Integer userId, Integer testId );
 
     String essayScoring(List<EssayScoringRequest> essayScoringRequestList);
-    String getMultipleChoiceScores();
-    Object getMarkOnTotalQuestion(String testName);
-    Long getEssayScoreResults(String testName);
+    String getMultipleChoiceScores(Integer id,String testName);
+    String getMarkOnTotalQuestion(String testName);
+    String getEssayScoreResults(String testName);
 }
 

@@ -13,17 +13,17 @@ public class UserTestEntity {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    public Integer id;
 
-   @JsonIgnore
+
    @ManyToOne
    @JoinColumn(name = "user_id")
    private  UserEntity user;
 
-   @JsonIgnore
    @ManyToOne
    @JoinColumn(name = "test_id")
    private TestEntity test;
-
+   @Column(columnDefinition = "integer default 0")
    private  Integer status_result;
+   @Column(columnDefinition = "integer default 0")
    private  Integer status_notice;
 
 //   @OneToOne(mappedBy = "userTest")

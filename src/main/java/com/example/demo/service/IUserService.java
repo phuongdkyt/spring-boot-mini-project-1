@@ -1,14 +1,22 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.UserEntity;
-import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface IUserService {
-    public ResponseEntity<?> findAll();
+    public Optional<UserEntity> findById(Integer id);
 
-    public ResponseEntity<?> save(UserEntity user);
+    public void deleteById(Integer id);
 
-    public ResponseEntity<?> findById(Integer id);
+    public List<UserEntity> findAll();
 
-    public ResponseEntity<?> deleteById(Integer id);
+    public void save(UserEntity userEntities);
+
+    public List<UserEntity> findByEmail(String email);
+
+    public boolean existsByEmail(String email);
+
+    public boolean existsById(Integer id);
 }

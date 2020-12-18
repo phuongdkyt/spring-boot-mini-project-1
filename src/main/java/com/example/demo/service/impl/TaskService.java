@@ -3,10 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.common.Constants;
 import com.example.demo.entity.*;
 import com.example.demo.payload.request.EssayScoringRequest;
-import com.example.demo.repository.QuestionTestRepository;
-import com.example.demo.repository.TaskRepository;
-import com.example.demo.repository.TestRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.*;
 import com.example.demo.security.UserPrincipal;
 import com.example.demo.service.ITaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,9 @@ public class TaskService implements ITaskService {
     UserRepository userRepository;
     @Autowired
     TestRepository testRepository;
+    @Autowired
+    UserTestRepository userTestRepository;
+
     UserPrincipal userPrincipal;
 
     @Override
@@ -70,25 +70,28 @@ public class TaskService implements ITaskService {
 
         return reponse;
     }
-    public Long getMarkOnTotalQuestion(String testName){
+    public String getMarkOnTotalQuestion(String testName){
         userPrincipal =
                 (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int id =userPrincipal.getId();
         TestEntity testEntity= testRepository.findByTestName(testName);
-       Long result=  taskRepository.getMarkOnTotalQuestion(id,"TN",testEntity.getId());
-      return  result;
+       Long result=  taskRepository.getMarkOnTotalQuestion(id,Constants.TN,testEntity.getId());
+        Long totalResult=taskRepository.getTotalQuestion(id,Constants.TN,testEntity.getId());
+      return  result+"/"+totalResult;
     }
     public String essayScoring(List<EssayScoringRequest> essayScoringRequestList){
+//        Optional<UserEntity> userEntity=userRepository.findById(1);
+
         TestEntity testEntity =testRepository.findByTestName("bai1");
-        List<QuestionTestEntity> questionTestEntityLíst=questionTestRepository.findAllByTest_Id(testEntity.getId());
-        for(int i=0;i<questionTestEntityLíst.size();i++){
+        //tim kiem theo bai test so 1
+        List<QuestionTestEntity> questionTestEntityList=questionTestRepository.findAllByTest_Id(testEntity.getId());
+        for(int i=0;i<questionTestEntityList.size();i++){
 
                 for (int j = 0; j < essayScoringRequestList.size(); j++) {
-                    if (questionTestEntityLíst.get(i).getQuestion().getId() == essayScoringRequestList.get(j).getId()) {
-                        TaskEntity taskEntity = taskRepository.findByQuestionTestId(questionTestEntityLíst.get(i).getId());
+                    if (questionTestEntityList.get(i).getQuestion().getId() == essayScoringRequestList.get(j).getId()) {
+                        TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(),2);
                         taskEntity.setMark(essayScoringRequestList.get(j).getMark());
                         taskRepository.save(taskEntity);
-                        break;
 
                     }
             }
@@ -97,11 +100,11 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public String getMultipleChoiceScores() {
+    public String getMultipleChoiceScores(Integer id,String testName) {
         userPrincipal =
                 (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<TaskEntity> taskEntityList = taskRepository.findAllByUser_Id(1);
-        TestEntity testEntity = testRepository.findByTestName("bai1");
+        List<TaskEntity> taskEntityList = taskRepository.findAllByUser_Id(id);
+        TestEntity testEntity = testRepository.findByTestName(testName);
         List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
 
         int size = questionTestEntityList.size();
@@ -112,12 +115,12 @@ public class TaskService implements ITaskService {
 
                     if (taskEntityList.get(i).getQuestionTest().getQuestion().getId() == questionTestEntityList.get(j).getQuestion().getId()) {
                         if (taskEntityList.get(i).getTaskAwnser().equals(questionTestEntityList.get(j).getQuestion().getAnswer())) {
-                            TaskEntity taskEntity = taskRepository.findByQuestionTestId(questionTestEntityList.get(i).getId());
+                            TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(),id);
                             taskEntity.setMark(1.0);
                             taskRepository.save(taskEntity);
                             break;
                         } else {
-                            TaskEntity taskEntity = taskRepository.findByQuestionTestId(questionTestEntityList.get(i).getId());
+                            TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(),id);
                             taskEntity.setMark(0.0);
                             taskRepository.save(taskEntity);
                             break;
@@ -131,14 +134,15 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public Long getEssayScoreResults(String testName) {
+    public String getEssayScoreResults(String testName) {
         userPrincipal =
                 (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int id =userPrincipal.getId();
         TestEntity testEntity= testRepository.findByTestName(testName);
 //        List<QuestionTestEntity> questionTestEntityList=questionTestRepository.
         Long scoreResults=  taskRepository.getEssayScoreResults(id,"TL",testEntity.getId());
-        return  scoreResults;
+        Long totalResult=taskRepository.getTotalQuestion(id,"TL",testEntity.getId());
+        return  scoreResults+"/"+totalResult*10;
     }
 
 }

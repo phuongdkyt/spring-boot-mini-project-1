@@ -43,12 +43,12 @@ public class TaskController {
         return response;
     }
 
-    @GetMapping("/{getNotice}")
-    public BaseMessage getNoticeByUserId(){
+    @GetMapping("/getnotice/user/{userid}/test/{testid}")
+    public BaseMessage getNoticeByUserId(@PathVariable Integer userid,@PathVariable Integer testid){
         BaseMessage response;
         long timeStamp = Common.getTimeStamp();
-        int userId = 1;
-        int testId = 1;
+        int userId = userid;
+        int testId = testid;
         try {
             NoticeOutput resultTask = taskService.getNotice(userId,testId);
             response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, resultTask);
@@ -69,11 +69,11 @@ public class TaskController {
             Object object= taskService.getMarkOnTotalQuestion(testName);
             System.out.println(object.toString());
             response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, object);
-            logger.info(Common.createMessageLog(testName, response, Common.getUserName(), timeStamp, "findTaskResutl"));
+            logger.info(Common.createMessageLog(testName, response, Common.getUserName(), timeStamp, "getMarkOnTotalQuestion"));
 
         } catch (Exception e) {
             response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
-            logger.error(Common.createMessageLog(testName, response, Common.getUserName(), timeStamp, "findTaskResutl"));
+            logger.error(Common.createMessageLog(testName, response, Common.getUserName(), timeStamp, "getMarkOnTotalQuestion"));
         }
         return response;
     }
@@ -82,7 +82,7 @@ public class TaskController {
         BaseMessage response;
         long timeStamp = Common.getTimeStamp();
         try {
-            Long results= taskService.getEssayScoreResults(testName);
+            String results= taskService.getEssayScoreResults(testName);
 
             response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
             logger.info(Common.createMessageLog(testName, response, Common.getUserName(), timeStamp, "getEssayScoreResults"));
@@ -94,12 +94,36 @@ public class TaskController {
         return response;
     }
     @PutMapping("/essayscoreresults")
-    public String essayScoring(@RequestBody List<EssayScoringRequest> essayScoringRequest){
-        return taskService.essayScoring(essayScoringRequest);
+    public BaseMessage essayScoring(@RequestBody List<EssayScoringRequest> essayScoringRequest){
+        BaseMessage response;
+        long timeStamp = Common.getTimeStamp();
+        try {
+            String results=taskService.essayScoring(essayScoringRequest);
+
+            response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
+            logger.info(Common.createMessageLog(essayScoringRequest, response, Common.getUserName(), timeStamp, "getEssayScoreResults"));
+
+        } catch (Exception e) {
+            response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
+            logger.error(Common.createMessageLog(essayScoringRequest, response, Common.getUserName(), timeStamp, "getEssayScoreResults"));
+        }
+        return response;
     }
-    @GetMapping("/tn")
-    public String getMultipleChoiceScores(){
-        return taskService.getMultipleChoiceScores();
+    @GetMapping("/result/user/{id}/test/{testName}")
+    public BaseMessage getMultipleChoiceScores(@PathVariable Integer id,@PathVariable String testName){
+        BaseMessage response;
+        long timeStamp = Common.getTimeStamp();
+        try {
+            String results=taskService.getMultipleChoiceScores(id,testName);
+
+            response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
+            logger.info(Common.createMessageLog(testName, response, Common.getUserName(), timeStamp, "getEssayScoreResults"));
+
+        } catch (Exception e) {
+            response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
+            logger.error(Common.createMessageLog(testName, response, Common.getUserName(), timeStamp, "getEssayScoreResults"));
+        }
+        return response;
     }
 
 }

@@ -21,20 +21,23 @@ public class TestEntity {
     private Integer id;
     @Column(nullable = false)
     private String testName;
-    @Column(nullable = false)
-    private Integer testTime;
     @Temporal(TemporalType.DATE)
-    private Date testDate;//
+    private Date testDateBegin;
+    @Temporal(TemporalType.DATE)
+    private Date testDateFinish;
 
 
 
 
+
+    @JsonIgnore
     @OneToMany(mappedBy = "test")
     private List<UserTestEntity> userTestEntityList=new ArrayList<>();
 
     @OneToMany(mappedBy = "test")
     private List<QuestionTestEntity> questionTestEntityList=new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "test")
     private List<TaskEntity> taskEntityList=new ArrayList<>();
 
