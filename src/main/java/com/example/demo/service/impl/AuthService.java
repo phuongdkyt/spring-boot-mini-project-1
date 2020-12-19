@@ -8,7 +8,7 @@ import com.example.demo.entity.bo.BaseMessage;
 import com.example.demo.entity.bo.ResponseEntityBO;
 import com.example.demo.payload.request.ChangePasswordRequest;
 import com.example.demo.payload.request.LoginRequest;
-import com.example.demo.payload.request.SignupRequest;
+import com.example.demo.payload.request.RegisterRequest;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
@@ -37,157 +37,160 @@ import java.util.stream.Collectors;
 
 @Service
 public class AuthService implements IAuthService {
-    @Autowired
-    AuthenticationManager authenticationManager;
+	@Autowired
+	AuthenticationManager authenticationManager;
 
-    @Autowired
-    UserRepository userRepository;
+	@Autowired
+	UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+	@Autowired
+	RoleRepository roleRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
-    @Autowired
-    JwtTokenProvider tokenProvider;
+	@Autowired
+	JwtTokenProvider tokenProvider;
 
-    Logger logger = Logger.getLogger("AuthService");
-    BaseMessage response;
-    long timeStamp;
-    HashMap<String, Object> result;
-    UserPrincipal userPrincipal;
+	Logger logger = Logger.getLogger("AuthService");
+	BaseMessage response;
+	long timeStamp;
+	HashMap<String, Object> result;
+	UserPrincipal userPrincipal;
 
-    @Override
-    public ResponseEntity<?> login(LoginRequest loginRequest) {
-        timeStamp = Common.getTimeStamp();
-        if (!userRepository.existsByEmail(loginRequest.getEmail())) {
-            response = new BaseMessage(Constants.ERROR_RESPONSE, "Email khong tồn tại, vui lòng thử lại!", timeStamp);
-            logger.error(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail().trim(),
-                            loginRequest.getPassword().trim()
-                    )
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = tokenProvider.generateToken(authentication);
-            userPrincipal = (UserPrincipal) authentication.getPrincipal();
-            List<String> roles = userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toList());
+	@Override
+	public ResponseEntity<?> login(LoginRequest loginRequest) {
+		timeStamp = Common.getTimeStamp();
 
-            result = new HashMap<String, Object>();
-            result.put("id", userPrincipal.getId());
-            result.put("email", userPrincipal.getEmail());
-            result.put("roles", roles);
-            result.put("accessToken", jwt);
-            result.put("tokenType", "Bearer");
+		try {
+			if (!userRepository.existsByEmail(loginRequest.getEmail())) {
+				response = new BaseMessage(Constants.ERROR_RESPONSE, "Email không tồn tại, vui lòng thử lại!", timeStamp);
+				logger.error(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
 
-            response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, result);
-            logger.info(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (AuthenticationException e) {
-            response = new BaseMessage(Constants.ERROR_RESPONSE, "sai mật khẩu nhé các em!! ", timeStamp);
-            logger.error(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
-    }
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+							loginRequest.getEmail().trim(),
+							loginRequest.getPassword().trim()
+					)
+			);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = tokenProvider.generateToken(authentication);
+			userPrincipal = (UserPrincipal) authentication.getPrincipal();
+			List<String> roles = userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+					.collect(Collectors.toList());
 
-    @Override
-    public ResponseEntity<?> register(SignupRequest signupRequest) {
-        timeStamp = Common.getTimeStamp();
+			result = new HashMap<String, Object>();
+			result.put("id", userPrincipal.getId());
+			result.put("email", userPrincipal.getEmail());
+			result.put("roles", roles);
+			result.put("accessToken", jwt);
+			result.put("tokenType", "Bearer");
 
-        try {
-            if (userRepository.existsByEmail(signupRequest.getEmail())) {
-                response = new BaseMessage(Constants.ERROR_RESPONSE, "Email đã tồn tại, vui lòng thử lại!", timeStamp);
-                logger.error(Common.createMessageLog(signupRequest, response, null, timeStamp, "register"));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
+			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, result);
+			logger.info(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (AuthenticationException e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, "Sai mật khẩu nhé các em!!", timeStamp);
+			logger.error(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+	}
 
-            UserEntity userEntity = new UserEntity(
-                    signupRequest.getEmail(),
-                    passwordEncoder.encode(signupRequest.getPassword())
-            );
+	@Override
+	public ResponseEntity<?> register(RegisterRequest registerRequest) {
+		timeStamp = Common.getTimeStamp();
 
-            // Kiểm tra xem tên quyền có tồn tại không
-            Optional<RoleEntity> roleEntity = roleRepository.findByName("ROLE_ADMIN");
-            // Kiểm tra xem tên quyền có tồn tại không
-            if (!roleEntity.isPresent()) {
-                // Nếu không tìm thấy thì thông báo thất bại
-                response = new BaseMessage(Constants.ERROR_RESPONSE, "Không tìm thấy quyền này!", timeStamp);
-                logger.error(Common.createMessageLog(signupRequest, response, null, timeStamp, "register"));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
+		try {
+			if (userRepository.existsByEmail(registerRequest.getEmail())) {
+				response = new BaseMessage(Constants.ERROR_RESPONSE, "Email đã tồn tại, vui lòng thử lại!", timeStamp);
+				logger.error(Common.createMessageLog(registerRequest, response, null, timeStamp, "register"));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			}
 
-            userEntity.setRoleEntities(Collections.singleton(roleEntity.get()));
-            userRepository.save(userEntity);
+			UserEntity userEntity = new UserEntity(
+					registerRequest.getEmail(),
+					passwordEncoder.encode(registerRequest.getPassword())
+			);
 
-            response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Thêm người dùng thành công!", timeStamp);
-            logger.error(Common.createMessageLog(signupRequest, response, null, timeStamp, "register"));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
-            logger.error(Common.createMessageLog(signupRequest, response, null, timeStamp, "register"));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-    }
+			// Kiểm tra xem tên quyền có tồn tại không
+			Optional<RoleEntity> roleEntity = roleRepository.findByName("ROLE_ADMIN");
+			// Kiểm tra xem tên quyền có tồn tại không
+			if (!roleEntity.isPresent()) {
+				// Nếu không tìm thấy thì thông báo thất bại
+				response = new BaseMessage(Constants.ERROR_RESPONSE, "Không tìm thấy quyền này!", timeStamp);
+				logger.error(Common.createMessageLog(registerRequest, response, null, timeStamp, "register"));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			}
 
-    @Override
-    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
-        try {
-            userPrincipal =
-                    (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			userEntity.setRoleEntities(Collections.singleton(roleEntity.get()));
+			userRepository.save(userEntity);
 
-            // Tìm kiếm người dùng theo id
-            Optional<UserEntity> userEntity = userRepository.findById(userPrincipal.getId());
+			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Thêm người dùng thành công!", timeStamp);
+			logger.error(Common.createMessageLog(registerRequest, response, null, timeStamp, "register"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
+			logger.error(Common.createMessageLog(registerRequest, response, null, timeStamp, "register"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+	}
 
-            // Kiểm tra xem id người dùng có tồn tại không
-            if (!userEntity.isPresent()) {
-                // Ngược lại thì thông báo thất bại
-                response = new BaseMessage(Constants.ERROR_RESPONSE, "Người dùng này không tồn tại", timeStamp);
-                logger.error(Common.createMessageLog(changePasswordRequest, response, null, timeStamp, "changePassword"));
-                return ResponseEntity.status(HttpStatus.OK).body(response);
-            }
+	@Override
+	public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+		try {
+			userPrincipal =
+					(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            // Kiểm tra mật khẩu cũ không khớp
-            if (!passwordEncoder.matches(changePasswordRequest.getOld_password(), userEntity.get().getPassword())) {
-                response = new BaseMessage(Constants.ERROR_RESPONSE, "Mật khẩu cũ không khớp", timeStamp);
-                logger.error(Common.createMessageLog(changePasswordRequest, response, null, timeStamp, "changePassword"));
-                return ResponseEntity.status(HttpStatus.OK).body(response);
-            }
+			// Tìm kiếm người dùng theo id
+			Optional<UserEntity> userEntity = userRepository.findById(userPrincipal.getId());
 
-            // Kiểm tra mật khẩu mới trùng với mật khẩu cũ
-            if (
-                    passwordEncoder.matches(changePasswordRequest.getNew_password(), userEntity.get().getPassword())
-                            || changePasswordRequest.getNew_password().equals(changePasswordRequest.getOld_password())
-            ) {
-                response = new BaseMessage(Constants.ERROR_RESPONSE, "Mật khẩu mới không được trùng với mật khẩu cũ", timeStamp);
-                logger.error(Common.createMessageLog(changePasswordRequest, response, null, timeStamp, "changePassword"));
-                return ResponseEntity.status(HttpStatus.OK).body(response);
-            }
+			// Kiểm tra xem id người dùng có tồn tại không
+			if (!userEntity.isPresent()) {
+				// Ngược lại thì thông báo thất bại
+				response = new BaseMessage(Constants.ERROR_RESPONSE, "Người dùng này không tồn tại", timeStamp);
+				logger.error(Common.createMessageLog(changePasswordRequest, response, Common.getUserName(), timeStamp,
+						"changePassword"));
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
 
-            // Mã hoá mật khẩu
-            userEntity.get().setPassword(passwordEncoder.encode(changePasswordRequest.getNew_password()));
+			// Kiểm tra mật khẩu cũ không khớp
+			if (!passwordEncoder.matches(changePasswordRequest.getOld_password(), userEntity.get().getPassword())) {
+				response = new BaseMessage(Constants.ERROR_RESPONSE, "Mật khẩu cũ không khớp", timeStamp);
+				logger.error(Common.createMessageLog(changePasswordRequest, response, userPrincipal.getEmail(), timeStamp, "changePassword"));
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
 
-            userRepository.save(userEntity.get());
+			// Kiểm tra mật khẩu mới trùng với mật khẩu cũ
+			if (
+					passwordEncoder.matches(changePasswordRequest.getNew_password(), userEntity.get().getPassword())
+							|| changePasswordRequest.getNew_password().equals(changePasswordRequest.getOld_password())
+			) {
+				response = new BaseMessage(Constants.ERROR_RESPONSE, "Mật khẩu mới không được trùng với mật khẩu cũ", timeStamp);
+				logger.error(Common.createMessageLog(changePasswordRequest, response, userPrincipal.getEmail(), timeStamp, "changePassword"));
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
 
-            // Thông báo đổi mật khẩu thành công
-            response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Đổi mật khẩu mới thành công", timeStamp);
-            logger.error(Common.createMessageLog(changePasswordRequest, response, null, timeStamp, "changePassword"));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
-            logger.error(Common.createMessageLog(changePasswordRequest, response, null, timeStamp, "changePassword"));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-    }
+			// Mã hoá mật khẩu
+			userEntity.get().setPassword(passwordEncoder.encode(changePasswordRequest.getNew_password()));
 
-    @Override
-    public ResponseEntity<?> refreshToken() {
+			userRepository.save(userEntity.get());
+
+			// Thông báo đổi mật khẩu thành công
+			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Đổi mật khẩu mới thành công", timeStamp);
+			logger.error(Common.createMessageLog(changePasswordRequest, response, userPrincipal.getEmail(), timeStamp, "changePassword"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
+			logger.error(Common.createMessageLog(changePasswordRequest, response, userPrincipal.getEmail(), timeStamp, "changePassword"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> refreshToken() {
 //        return authService.refreshToken();
-        return null;
-    }
+		return null;
+	}
 }

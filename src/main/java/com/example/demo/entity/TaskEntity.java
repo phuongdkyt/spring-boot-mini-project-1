@@ -11,28 +11,28 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tbl_tasks")
 public class TaskEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
 
-    @Column(nullable = false)
-    private String taskAwnser;
+	@Column(nullable = false)
+	private String taskAwnser;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "question_test_id")
-    private QuestionTestEntity questionTest;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "question_test_id")
+	private QuestionTestEntity questionTest;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "test_id")
-    private TestEntity test;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private UserEntity user;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "test_id")
+	private TestEntity test;
 
-    private Double mark;
+	private Double mark;
 
 }

@@ -19,61 +19,61 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tbl_users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
+		@UniqueConstraint(columnNames = "email")
 })
 @Getter
 @Setter
 public class UserEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    @NaturalId
-    @Size(max = 40)
-    @Email(message = "Please provide a valid Email")
-    @NotEmpty(message = "Please provide an email")
-    private String email;
+	@NaturalId
+	@Size(max = 40)
+	@Email(message = "Please provide a valid Email")
+	@NotEmpty(message = "Please provide an email")
+	private String email;
 
-    @NotBlank
-    @Size(max = 100)
-    @JsonIgnore
-    private String password;
+	@NotBlank
+	@Size(max = 100)
+	@JsonIgnore
+	private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<RoleEntity> roleEntities = new HashSet<>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<RoleEntity> roleEntities = new HashSet<>();
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true)
-    private UserEntity user;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = true)
+	private UserEntity user;
 
-    @OneToMany(mappedBy = "user")
-    private List<QuestionEntity> questionEntityList = new ArrayList<>();
+	@OneToMany(mappedBy = "user")
+	private List<QuestionEntity> questionEntityList = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private List<UserTestEntity> userTestEntityList = new ArrayList<>();
+	@JsonIgnore
+	@OneToMany(mappedBy = "user")
+	private List<UserTestEntity> userTestEntityList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<TaskEntity> taskEntityList = new ArrayList<>();
+	@OneToMany(mappedBy = "user")
+	private List<TaskEntity> taskEntityList = new ArrayList<>();
 
-    public UserEntity() {
-    }
+	public UserEntity() {
+	}
 
-    public UserEntity(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
+	public UserEntity(String email, String password) {
+		this.email = email;
+		this.password = password;
+	}
 
-    public UserEntity(Integer id, @Size(max = 40) @NotBlank @Email String email, @NotBlank @Size(max = 100) String password, Set<RoleEntity> roleEntities) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.roleEntities = roleEntities;
-    }
+	public UserEntity(Integer id, @Size(max = 40) @NotBlank @Email String email, @NotBlank @Size(max = 100) String password, Set<RoleEntity> roleEntities) {
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.roleEntities = roleEntities;
+	}
 
 
 }

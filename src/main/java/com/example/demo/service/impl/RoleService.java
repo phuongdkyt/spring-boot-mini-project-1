@@ -14,40 +14,40 @@ import java.util.Optional;
 
 @Service
 public class RoleService implements IRoleService {
-    @Autowired
-    private final RoleRepository roleRepository;
+	@Autowired
+	private final RoleRepository roleRepository;
 
-    public RoleService(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
+	public RoleService(RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
+	}
 
-    @Override
-    public List<RoleEntity> findAll() {
-        return roleRepository.findAll();
-    }
+	@Override
+	public List<RoleEntity> findAll() {
+		return roleRepository.findAll();
+	}
 
-    public ResponseEntity<?> save(RoleEntity role) {
+	public ResponseEntity<?> save(RoleEntity role) {
 
-        roleRepository.save(role);
+		roleRepository.save(role);
 
-        return new ResponseEntity("OKE", HttpStatus.OK);
-    }
+		return new ResponseEntity("OKE", HttpStatus.OK);
+	}
 
-    @Override
-    public RoleEntity findById(Integer id) {
-        return roleRepository.findById(id).get();
-    }
+	@Override
+	public RoleEntity findById(Integer id) {
+		return roleRepository.findById(id).get();
+	}
 
-    @Override
-    public Optional<RoleEntity> findByName(String roleName) {
-        return roleRepository.findByName(roleName);
-    }
+	@Override
+	public Optional<RoleEntity> findByName(String roleName) {
+		return roleRepository.findByName(roleName);
+	}
 
-    @Override
-    public ResponseEntity<?> deleteById(Integer id) {
-        roleRepository.deleteById(id);
+	@Override
+	public ResponseEntity<?> deleteById(Integer id) {
+		roleRepository.deleteById(id);
 
-        return new ResponseEntity(new MessageResponse(true, "Xoá người dùng thành công"), HttpStatus.OK);
-    }
+		return new ResponseEntity(new MessageResponse(true, "Xoá người dùng thành công"), HttpStatus.OK);
+	}
 
 }

@@ -9,12 +9,13 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
-    Optional<UserEntity> findById(Integer id);
+	Optional<UserEntity> findById(Integer id);
 
-    Optional<UserEntity> findByEmail(String email);
+	Optional<UserEntity> findByEmail(String email);
 
-    boolean existsById(Integer id);
+	boolean existsById(Integer id);
 
-    boolean existsByEmail(String email);
-    List<UserEntity> findByEmailStartsWith(String email);
+	boolean existsByEmail(String email);
+
+	List<UserEntity> findByEmailStartsWith(String email);
 }

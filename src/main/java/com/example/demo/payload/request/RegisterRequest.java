@@ -1,9 +1,6 @@
 package com.example.demo.payload.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
@@ -11,17 +8,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Validated
-public class LoginRequest {
-
-	@NotNull
+public class RegisterRequest {
 	@NotBlank
-	@Size(min = 6, max = 32)
-	@Email
+	@Size(max = 40)
+	@Email(message = "Email should be valid")
 	private String email;
 
 	@NotBlank

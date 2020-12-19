@@ -15,11 +15,11 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class RoleEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    @NaturalId
-    @Column(unique = true, length = 60)
-    private String name;
+	@NaturalId
+	@Column(unique = true, length = 60)
+	private String name;
 }
