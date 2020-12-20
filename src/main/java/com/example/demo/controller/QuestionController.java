@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ public class QuestionController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findById(@PathVariable Integer id) {
+	public ResponseEntity<?> findById(@Valid @PathVariable Integer id) {
 		timeStamp = Common.getTimeStamp();
 		try {
 			Optional<QuestionEntity> questionEntity = questionService.findById(id);
@@ -66,7 +67,7 @@ public class QuestionController {
 	}
 
 	@GetMapping("/findbyname/{question}")
-	public ResponseEntity<?> findByQuestion(@PathVariable String question) {
+	public ResponseEntity<?> findByQuestion(@Valid @PathVariable String question) {
 		timeStamp = Common.getTimeStamp();
 		try {
 			List<QuestionEntity> questionEntityList = questionService.findByQuestion(question);
@@ -80,25 +81,42 @@ public class QuestionController {
 		}
 	}
 
+	@PostMapping
+	public ResponseEntity<?> save(@Valid @RequestBody QuestionEntity question) {
+		timeStamp = Common.getTimeStamp();
+		try {
+			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Thêm thành công", timeStamp);
+			questionService.save(question);
+			logger.info(Common.createMessageLog(question, response, Common.getUserName(), timeStamp, "save"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không thể thêm câu hỏi", timeStamp);
+			logger.error(Common.createMessageLog(question, response, Common.getUserName(), timeStamp, "save"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+	}
+
 	@PutMapping("/{id}")
-	public ResponseEntity<?> save(@RequestBody QuestionEntity question, @PathVariable Integer id) {
+	public ResponseEntity<?> update(@Valid @RequestBody QuestionEntity question, @Valid @PathVariable Integer id) {
 		timeStamp = Common.getTimeStamp();
 		try {
 			Optional<QuestionEntity> questionEntity = questionService.findById(id);
 			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Sửa Thành công", timeStamp);
-			questionService.save(question, id);
-			logger.info(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "save"));
+			questionService.update(question, id);
+			logger.info(Common.createMessageLog(question, response, Common.getUserName(), timeStamp, "update"));
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (Exception e) {
 			response = new BaseMessage(Constants.ERROR_RESPONSE, "không tìm thấy id câu hỏi", timeStamp);
-			logger.error(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "save"));
+			logger.error(Common.createMessageLog(question, response, Common.getUserName(), timeStamp, "update"));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 	}
 
 	@PostMapping("/saveall/{level}")
-	public ResponseEntity<?> saveAll(@RequestBody List<QuestionEntity> questions, @PathVariable Character level) {
+	public ResponseEntity<?> saveAll(@Valid @RequestBody List<QuestionEntity> questions,
+	                                 @Valid @PathVariable Character level) {
 		timeStamp = Common.getTimeStamp();
+
 		try {
 			if (Common.isNullOrEmpty(questions)) {
 				response = new BaseMessage(Constants.ERROR_RESPONSE, "không thêm các câu hỏi được", timeStamp);

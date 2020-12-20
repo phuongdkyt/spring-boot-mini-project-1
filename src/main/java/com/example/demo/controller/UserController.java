@@ -65,7 +65,6 @@ public class UserController {
 	}
 
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> saveUser(@Valid @RequestBody RegisterRequest registerRequest) {
 		timeStamp = Common.getTimeStamp();
 

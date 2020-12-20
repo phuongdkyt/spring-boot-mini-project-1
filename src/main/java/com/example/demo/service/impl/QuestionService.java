@@ -41,9 +41,13 @@ public class QuestionService implements IQuestionService {
 	}
 
 	@Override
-	public void save(QuestionEntity question, Integer id) {
+	public void save(QuestionEntity question) {
+		questionRepository.save(question);
+	}
+
+	@Override
+	public void update(QuestionEntity question, Integer id) {
 		Optional<QuestionEntity> questionCurrent = questionRepository.findById(id);
-//        QuestionEntity questionEntity;
 		if (questionCurrent.isPresent()) {
 
 			questionCurrent.get().setA(question.getA());
@@ -58,18 +62,18 @@ public class QuestionService implements IQuestionService {
 	}
 
 	@Override
-	public void saveAll(List<QuestionEntity> questionEntityList, Character lv) {
-
+	public void saveAll(List<QuestionEntity> questionEntityList, Character level) {
 		Optional<UserEntity> userEntity = userRepository.findById(1);
 
 		for (int i = 0; i < questionEntityList.size(); i++) {
 			questionEntityList.get(i).setUser(userEntity.get());
-			questionEntityList.get(i).setLevel(lv);
+			questionEntityList.get(i).setLevel(level);
 			if (Common.isNullOrEmpty(questionEntityList.get(i).getAnswer()))
 				questionEntityList.get(i).setQuestionType(Constants.TL);
 			else
 				questionEntityList.get(i).setQuestionType(Constants.TN);
 		}
+
 		questionRepository.saveAll(questionEntityList);
 	}
 }

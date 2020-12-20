@@ -14,7 +14,9 @@ public interface IQuestionService {
 
 	public void deleteById(Integer id);
 
-	public void save(QuestionEntity question, Integer id);
+	public void save(QuestionEntity question);
+
+	public void update(QuestionEntity question, Integer id);
 
 	public void saveAll(List<QuestionEntity> questionEntityList, Character lv);
 
