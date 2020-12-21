@@ -16,12 +16,9 @@ public class QuestionTestEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "test_id")
 	private TestEntity test;
-
 
 	@ManyToOne
 	@JoinColumn(name = "question_id")

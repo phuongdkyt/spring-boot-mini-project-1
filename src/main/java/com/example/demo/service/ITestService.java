@@ -12,7 +12,7 @@ public interface ITestService {
 
 	public Optional<TestEntity> findById(Integer id);
 
-	public ResponseEntity<?> saveAll(List<TestEntity> testEntities);
+	public ResponseEntity<?> save(TestEntity testEntity);
 
 	public Optional<TestEntity> findByName(String name);
 

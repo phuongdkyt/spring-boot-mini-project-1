@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,12 +36,8 @@ public class TestService implements ITestService {
 	}
 
 	@Override
-	public ResponseEntity<?> saveAll(List<TestEntity> testEntities) {
-//        Optional<UserEntity> userEntity=userRepository.findById(1);
-//        for (int i=0;i<testEntities.size();i++){
-//            testEntities.get(i).setUser(userEntity.get());
-//        }
-//        testRepository.saveAll(testEntities);
+	public ResponseEntity<?> save(TestEntity testEntity) {
+		testRepository.save(testEntity);
 		return new ResponseEntity("Tạo bài thi thành công", HttpStatus.OK);
 	}
 

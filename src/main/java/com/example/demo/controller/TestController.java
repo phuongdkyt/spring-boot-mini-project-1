@@ -51,14 +51,32 @@ public class TestController {
 
 	@GetMapping("/{id}")
 	//tìm kiếm bài thi theo id
-	public Optional<TestEntity> findById(@PathVariable Integer id) {
-		return testService.findById(id);
+	public ResponseEntity<?> findById(@PathVariable Integer id) {
+		timeStamp = Common.getTimeStamp();
+		try {
+			Optional<TestEntity> testEntity = testService.findById(id);
+			if (testEntity.isPresent()) {
+				//tham chiếu đến đối tượng cần trả về
+				response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, testEntity);
+				logger.info(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "findbyId"));
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			} else {
+				//sử dựng hàm khởi tạo để giúp code ngắn gọn hơn
+				response = new BaseMessage(Constants.ERROR_RESPONSE, "Không có người dùng này!", timeStamp);
+				logger.error(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "findById"));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			}
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
+			logger.error(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "findByid"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
 	}
 
 	@PostMapping
 	//tạo bài thi
-	public ResponseEntity<?> saveAll(@RequestBody List<TestEntity> testEntities) {
-		return testService.saveAll(testEntities);
+	public ResponseEntity<?> save(@RequestBody TestEntity testEntities) {
+		return testService.save(testEntities);
 	}
 
 	//tìm kiếm bài thi theo tên bài thi
@@ -75,9 +93,21 @@ public class TestController {
 	}
 
 	//update bài thi
-	@PostMapping("/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<?> updateTest(@RequestBody TestEntity testEntity, @PathVariable Integer id) {
-		return testService.updateTest(testEntity, id);
+		timeStamp = Common.getTimeStamp();
+		try {
+			testService.updateTest(testEntity, id);
+
+			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Cập nhật thành công", timeStamp);
+			logger.info(Common.createMessageLog(testEntity, response, Common.getUserName(), timeStamp, "updateTest"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
+			logger.error(Common.createMessageLog(testEntity, response, Common.getUserName(), timeStamp, "updateTest"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
 	}
 
 	@PostMapping("/{id}/users")
@@ -87,12 +117,12 @@ public class TestController {
 			String results = testService.addListTestWithUser(idListUserRequests, id);
 
 			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
-			logger.info(Common.createMessageLog(idListUserRequests, response, Common.getUserName(), timeStamp, "getMultipleChoiceScores"));
+			logger.info(Common.createMessageLog(idListUserRequests, response, Common.getUserName(), timeStamp, "addListUserWithTest"));
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 
 		} catch (Exception e) {
 			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
-			logger.error(Common.createMessageLog(idListUserRequests, response, Common.getUserName(), timeStamp, "getMultipleChoiceScores"));
+			logger.error(Common.createMessageLog(idListUserRequests, response, Common.getUserName(), timeStamp, "addListUserWithTest"));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 	}
@@ -104,12 +134,12 @@ public class TestController {
 			String results = testService.addListQuestionsWithTest(idListQuestion, id);
 
 			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
-			logger.info(Common.createMessageLog(idListQuestion, response, Common.getUserName(), timeStamp, "getMultipleChoiceScores"));
+			logger.info(Common.createMessageLog(idListQuestion, response, Common.getUserName(), timeStamp, "addListQuestionsWithTest"));
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 
 		} catch (Exception e) {
 			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
-			logger.error(Common.createMessageLog(idListQuestion, response, Common.getUserName(), timeStamp, "getMultipleChoiceScores"));
+			logger.error(Common.createMessageLog(idListQuestion, response, Common.getUserName(), timeStamp, "addListQuestionsWithTest"));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 

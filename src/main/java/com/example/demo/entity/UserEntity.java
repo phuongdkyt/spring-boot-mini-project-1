@@ -50,14 +50,16 @@ public class UserEntity {
 	@JoinColumn(name = "user_id", nullable = true)
 	private UserEntity user;
 
-	@OneToMany(mappedBy = "user")
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private List<QuestionEntity> questionEntityList = new ArrayList<>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "user")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private List<UserTestEntity> userTestEntityList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "user")
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private List<TaskEntity> taskEntityList = new ArrayList<>();
 
 	public UserEntity() {
