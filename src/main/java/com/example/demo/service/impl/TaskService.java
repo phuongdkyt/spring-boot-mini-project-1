@@ -82,32 +82,36 @@ public class TaskService implements ITaskService {
 		return result + "/" + totalResult;
 	}
 
-	public String essayScoring(List<EssayScoringRequest> essayScoringRequestList) {
+	//cham diem tu luan
+	public String essayScoring(List<EssayScoringRequest> essayScoringRequestList, String testName, Integer userId) {
 //        Optional<UserEntity> userEntity=userRepository.findById(1);
 
-		TestEntity testEntity = testRepository.findByTestName("bai1");
+		TestEntity testEntity = testRepository.findByTestName(testName);
 		//tim kiem theo bai test so 1
 		List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
 		for (int i = 0; i < questionTestEntityList.size(); i++) {
+			if (questionTestEntityList.get(i).getQuestion().getQuestionType().equals(Constants.TL)) {
+				for (int j = 0; j < essayScoringRequestList.size(); j++) {
+					if (questionTestEntityList.get(i).getQuestion().getId() == essayScoringRequestList.get(j).getId()) {
+						TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(), userId);
+						taskEntity.setMark(essayScoringRequestList.get(j).getMark());
+						taskRepository.save(taskEntity);
 
-			for (int j = 0; j < essayScoringRequestList.size(); j++) {
-				if (questionTestEntityList.get(i).getQuestion().getId() == essayScoringRequestList.get(j).getId()) {
-					TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(), 2);
-					taskEntity.setMark(essayScoringRequestList.get(j).getMark());
-					taskRepository.save(taskEntity);
-
+					}
 				}
 			}
 		}
 		return "ok";
 	}
 
+	//lay diem trac nhiem
 	@Override
 	public String getMultipleChoiceScores(Integer id, String testName) {
 		userPrincipal =
 				(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		List<TaskEntity> taskEntityList = taskRepository.findAllByUser_Id(id);
+
 		TestEntity testEntity = testRepository.findByTestName(testName);
+		List<TaskEntity> taskEntityList = taskRepository.findAllByTest_IdAndUser_Id(testEntity.getId(), id);
 		List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
 
 		int size = questionTestEntityList.size();
@@ -122,7 +126,8 @@ public class TaskService implements ITaskService {
 							taskEntity.setMark(1.0);
 							taskRepository.save(taskEntity);
 							break;
-						} else {
+						}
+						if (!taskEntityList.get(i).getTaskAwnser().equals(questionTestEntityList.get(j).getQuestion().getAnswer())) {
 							TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(), id);
 							taskEntity.setMark(0.0);
 							taskRepository.save(taskEntity);
@@ -133,9 +138,12 @@ public class TaskService implements ITaskService {
 			}
 
 		}
-		return "ok";
+		Long result = taskRepository.getMarkOnTotalQuestion(id, Constants.TN, testEntity.getId());
+		Long totalResult = taskRepository.getTotalQuestion(id, Constants.TN, testEntity.getId());
+		return result + "/" + totalResult;
 	}
 
+	//lay diem tu luan
 	@Override
 	public String getEssayScoreResults(String testName) {
 		userPrincipal =
@@ -143,8 +151,8 @@ public class TaskService implements ITaskService {
 		int id = userPrincipal.getId();
 		TestEntity testEntity = testRepository.findByTestName(testName);
 //        List<QuestionTestEntity> questionTestEntityList=questionTestRepository.
-		Long scoreResults = taskRepository.getEssayScoreResults(id, "TL", testEntity.getId());
-		Long totalResult = taskRepository.getTotalQuestion(id, "TL", testEntity.getId());
+		Long scoreResults = taskRepository.getEssayScoreResults(id, Constants.TL, testEntity.getId());
+		Long totalResult = taskRepository.getTotalQuestion(id, Constants.TL, testEntity.getId());
 		return scoreResults + "/" + totalResult * 10;
 	}
 

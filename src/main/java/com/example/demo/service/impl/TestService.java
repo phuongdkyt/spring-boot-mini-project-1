@@ -27,10 +27,8 @@ public class TestService implements ITestService {
 	QuestionTestRepository questionTestRepository;
 
 	@Override
-	public ResponseEntity<?> findAll() {
-		HashMap<String, List<TestEntity>> list = new HashMap<>();
-		list.put("result", testRepository.findAll());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
+	public List<TestEntity> findAll() {
+		return testRepository.findAll();
 	}
 
 	@Override
@@ -72,6 +70,7 @@ public class TestService implements ITestService {
 		return new ResponseEntity(new MessageResponse(true, "Cập nhật thành công"), HttpStatus.OK);
 	}
 
+	//them user theo bai test
 	@Override
 	public String addListTestWithUser(List<Integer> idListUserRequest, Integer testId) {
 		Optional<TestEntity> testEntity = testRepository.findById(testId);
@@ -85,6 +84,7 @@ public class TestService implements ITestService {
 		return "đã thêm thành công";
 	}
 
+	//them cau hoi theo bai test
 	@Override
 	public String addListQuestionsWithTest(List<Integer> idListQuestionsTest, Integer testId) {
 		Optional<TestEntity> testEntity = testRepository.findById(testId);

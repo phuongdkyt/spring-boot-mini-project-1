@@ -14,6 +14,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
 	TaskEntity findByQuestionTestIdAndUserId(Integer id1, Integer id2);
 
+	List<TaskEntity> findAllByTest_IdAndUser_Id(Integer id1, Integer id2);
+
 	@Query(value = "select count(*) a from testapi.tbl_tasks a, testapi.tbl_test_questions b where 1=1\n" +
 			"            and a.user_id = :user_id" +
 			"            and b.test_id = :test_id" +
