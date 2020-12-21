@@ -18,15 +18,20 @@ public class QuestionEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+
 	@Column(name = "question", unique = true)
 	private String question;
 	private String a;
 	private String b;
 	private String c;
 	private String d;
+
+	@JsonIgnore
 	private String answer;
+
 	private Character level;
 	private String questionType;
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_id")
