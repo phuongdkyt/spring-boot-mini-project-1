@@ -9,14 +9,20 @@ import java.util.List;
 import java.util.Map;
 
 public class Common {
+	private static UserPrincipal userPrincipal;
 
 	public static Long getTimeStamp() {
 		return System.currentTimeMillis();
 	}
 
 	public static String getUserName() {
-		UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return userPrincipal.getEmail();
+	}
+
+	public static Integer getUserId() {
+		userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userPrincipal.getId();
 	}
 
 	public static boolean isNullOrEmpty(Object obj) {

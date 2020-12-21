@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,7 @@ public class TestEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date testDateFinish;
 
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "test")
 	private List<UserTestEntity> userTestEntityList = new ArrayList<>();
 
