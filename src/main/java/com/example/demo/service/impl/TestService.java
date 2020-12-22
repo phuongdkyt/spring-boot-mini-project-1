@@ -71,14 +71,16 @@ public class TestService implements ITestService {
 	public String addListTestWithUser(List<Integer> idListUserRequest, Integer testId) {
 		Optional<TestEntity> testEntity = testRepository.findById(testId);
 		for (int i = 0; i < idListUserRequest.size(); i++) {
-
-			UserTestEntity userTestEntity = new UserTestEntity();
-			userTestEntity.setTest(testEntity.get());
-			Optional<UserEntity> userEntity = userRepository.findById(idListUserRequest.get(i));
-			userTestEntity.setUser(userEntity.get());
-			userTestRepository.save(userTestEntity);
+			if (!userTestRepository.existsByUserIdAndTestId(idListUserRequest.get(i), testId)) {
+				UserTestEntity userTestEntity = new UserTestEntity();
+				userTestEntity.setTest(testEntity.get());
+				Optional<UserEntity> userEntity = userRepository.findById(idListUserRequest.get(i));
+				userTestEntity.setUser(userEntity.get());
+				userTestRepository.save(userTestEntity);
+			}
 		}
-		return "đã thêm thành công";
+
+		return "đã cập nhật thành công";
 	}
 
 	//them cau hoi theo bai test

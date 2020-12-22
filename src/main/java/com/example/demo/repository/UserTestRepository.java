@@ -15,5 +15,5 @@ public interface UserTestRepository extends JpaRepository<UserTestEntity, Intege
 			"where TU.test_id=:test_id and TU.user_id=:user_id",nativeQuery = true)
 	UserTestEntity findByTest_IdAndUser_Id(@Param("user_id") Integer user_id,@Param("test_id")Integer test_id);
 
-
+	boolean existsByUserIdAndTestId(Integer user_id, Integer test_id);
 }
