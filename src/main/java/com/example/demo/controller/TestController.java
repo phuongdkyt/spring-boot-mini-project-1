@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.common.Common;
 import com.example.demo.common.Constants;
+import com.example.demo.entity.QuestionEntity;
 import com.example.demo.entity.TestEntity;
 import com.example.demo.entity.bo.BaseMessage;
 import com.example.demo.entity.bo.ResponseEntityBO;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,44 +74,55 @@ public class TestController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 	}
-
+	//thêm bài thi
 	@PostMapping
-	//tạo bài thi
-	public ResponseEntity<?> save(@RequestBody TestEntity testEntities) {
-		return testService.save(testEntities);
-	}
-
-	//tìm kiếm bài thi theo tên bài thi
-	@GetMapping("search/{name}")
-	public ResponseEntity<Optional<TestEntity>> findByName(@PathVariable(value = "name") String name) {
-		Optional<TestEntity> result = testService.findByName(name);
-		return ResponseEntity.ok().body(result);
-	}
-
-	//xóa bài thi
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteTestEntity(@PathVariable Integer id) {
-		return testService.deleteTestById(id);
-	}
-
-	//update bài thi
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateTest(@RequestBody TestEntity testEntity, @PathVariable Integer id) {
+	public ResponseEntity<?> save(@Valid @RequestBody TestEntity test) {
 		timeStamp = Common.getTimeStamp();
 		try {
-			testService.updateTest(testEntity, id);
-
-			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Cập nhật thành công", timeStamp);
-			logger.info(Common.createMessageLog(testEntity, response, Common.getUserName(), timeStamp, "updateTest"));
+			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Thêm thành công", timeStamp);
+			testService.save(test);
+			logger.info(Common.createMessageLog(test, response, Common.getUserName(), timeStamp, "save"));
 			return ResponseEntity.status(HttpStatus.OK).body(response);
-
 		} catch (Exception e) {
-			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
-			logger.error(Common.createMessageLog(testEntity, response, Common.getUserName(), timeStamp, "updateTest"));
+			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không thể thêm bài thi", timeStamp);
+			logger.error(Common.createMessageLog(test, response, Common.getUserName(), timeStamp, "save"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+	}
+	//xóa bài thi
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable Integer id) {
+		timeStamp = Common.getTimeStamp();
+		try {
+			Optional<TestEntity> test = testService.findById(id);
+			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Xóa thành công", timeStamp);
+			testService.deleteTestById(id);
+			logger.info(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "deleteById"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không tìm thấy id bài thi", timeStamp);
+			logger.error(Common.createMessageLog(id, response, Common.getUserName(), timeStamp, "deleteById"));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 	}
 
+	//update bài thi
+	@PutMapping("/{id}")
+	public ResponseEntity<?> update(@Valid @RequestBody TestEntity test, @Valid @PathVariable Integer id) {
+		timeStamp = Common.getTimeStamp();
+		try {
+			testService.findById(id);
+			response = new BaseMessage(Constants.SUCCESS_RESPONSE, "Sửa Thành công", timeStamp);
+			testService.updateTest(test,id);
+			logger.info(Common.createMessageLog(test, response, Common.getUserName(), timeStamp, "update"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, "không tìm thấy id bài thi", timeStamp);
+			logger.error(Common.createMessageLog(test, response, Common.getUserName(), timeStamp, "update"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+	}
+	//thêm user vào bài thi
 	@PostMapping("/{id}/users")
 	public ResponseEntity<?> addListUserWithTest(@RequestBody List<Integer> idListUserRequests, @PathVariable Integer id) {
 		timeStamp = Common.getTimeStamp();
@@ -127,11 +140,13 @@ public class TestController {
 		}
 	}
 
-	@PostMapping("/{id}/tests")
+	//thêm câu hỏi vào bài thi
+	@PostMapping("/{id}/questions")
 	public ResponseEntity<?> addListQuestionsWithTest(@RequestBody List<Integer> idListQuestion, @PathVariable Integer id) {
 		timeStamp = Common.getTimeStamp();
 		try {
 			String results = testService.addListQuestionsWithTest(idListQuestion, id);
+
 			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
 			logger.info(Common.createMessageLog(idListQuestion, response, Common.getUserName(), timeStamp, "addListQuestionsWithTest"));
 			return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -143,23 +158,4 @@ public class TestController {
 		}
 
 	}
-
-	@GetMapping("/done")
-	public ResponseEntity<?> getAllTestAlready() {
-		timeStamp = Common.getTimeStamp();
-		try {
-			List<TestEntity> results = testService.getAllTestAlready();
-
-			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
-			logger.info(Common.createMessageLog(null, response, Common.getUserName(), timeStamp, "getAllTestAlready"));
-			return ResponseEntity.status(HttpStatus.OK).body(response);
-
-		} catch (Exception e) {
-			response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
-			logger.error(Common.createMessageLog(null, response, Common.getUserName(), timeStamp, "getAllTestAlready"));
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-
-	}
-
 }
