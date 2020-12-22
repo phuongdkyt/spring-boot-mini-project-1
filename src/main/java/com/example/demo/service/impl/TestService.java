@@ -85,13 +85,16 @@ public class TestService implements ITestService {
 		Optional<TestEntity> testEntity = testRepository.findById(testId);
 
 		for (int i = 0; i < idListQuestionsTest.size(); i++) {
-			QuestionTestEntity questionTestEntity = new QuestionTestEntity();
-			questionTestEntity.setTest(testEntity.get());
-			Optional<QuestionEntity> questionEntity = questionRepository.findById(idListQuestionsTest.get(i));
-			questionTestEntity.setQuestion(questionEntity.get());
-			questionTestRepository.save(questionTestEntity);
+			if (!questionTestRepository.existsByQuestionIdAndTestId(idListQuestionsTest.get(i), testId)) {
+				QuestionTestEntity questionTestEntity = new QuestionTestEntity();
+				questionTestEntity.setTest(testEntity.get());
+				Optional<QuestionEntity> questionEntity = questionRepository.findById(idListQuestionsTest.get(i));
+				questionTestEntity.setQuestion(questionEntity.get());
+				questionTestRepository.save(questionTestEntity);
+			}
 		}
-		return "đã thêm thành công";
+
+		return "đã cập nhật thành công";
 	}
 
 

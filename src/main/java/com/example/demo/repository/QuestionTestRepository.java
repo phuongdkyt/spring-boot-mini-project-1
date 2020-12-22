@@ -12,4 +12,5 @@ public interface QuestionTestRepository extends JpaRepository<QuestionTestEntity
 	public List<QuestionTestEntity> findAllByTest_Id(Integer id);
 
 	Long countAllByTest(TestEntity id);
+	boolean existsByQuestionIdAndTestId(Integer question_id, Integer test_id);
 }

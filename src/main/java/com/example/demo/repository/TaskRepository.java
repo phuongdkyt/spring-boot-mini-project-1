@@ -24,7 +24,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 	Long countResultMarked(@Param("user_id") Integer user_id, @Param("test_id") Integer test_id);
 
 	@Query(value = "SELECT \n" +
-			"    SUM(IF(Q.answer = T.task_awnser, 1, 0)) mark_questions,\n" +
+			"    SUM(IF(Q.answer = T.answer, 1, 0)) mark_questions,\n" +
 			"\tCOUNT(Q.question) total_questions\n" +
 			"FROM tbl_users U \n" +
 			"LEFT JOIN tbl_tasks T on T.user_id=U.id\n" +

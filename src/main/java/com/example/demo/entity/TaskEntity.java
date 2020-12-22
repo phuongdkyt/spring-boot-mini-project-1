@@ -16,8 +16,8 @@ public class TaskEntity {
 	private Integer id;
 
 
-	@Column(nullable = false)
-	private String taskAwnser;
+
+	private String answer;
 
 	@JsonIgnore
 	@ManyToOne

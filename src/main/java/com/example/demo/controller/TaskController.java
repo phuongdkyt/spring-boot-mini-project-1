@@ -40,24 +40,7 @@ public class TaskController {
 		return response;
 	}
 
-	//check thong bao
-	@GetMapping("/getnotice/user/{userid}/test/{testid}")
-	public BaseMessage getNoticeByUserId(@PathVariable Integer userid, @PathVariable Integer testid) {
-		BaseMessage response;
-		long timeStamp = Common.getTimeStamp();
-		int userId = userid;
-		int testId = testid;
-		try {
-			NoticeOutput resultTask = taskService.getNotice(userId, testId);
-			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, resultTask);
-			logger.info(Common.createMessageLog(userId + " " + testId, response, Common.getUserName(), timeStamp, "findTaskResutl"));
 
-		} catch (Exception e) {
-			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
-			logger.error(Common.createMessageLog(userId + " " + testId, response, Common.getUserName(), timeStamp, "findTaskResutl"));
-		}
-		return response;
-	}
 
 	//    @GetMapping("/multiplechoiceresults/{testName}")
 //    public BaseMessage getMarkOnTotalQuestion(@PathVariable String testName){
