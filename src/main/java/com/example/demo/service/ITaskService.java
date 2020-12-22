@@ -7,16 +7,16 @@ import com.example.demo.payload.request.EssayScoringRequest;
 import java.util.List;
 
 public interface ITaskService {
-	public String sendAnswer(List<QuestionEntity> questionEntityList, String testName);
+	public String sendAnswer(List<QuestionEntity> questionEntityList, Integer test_id);
 
 	public NoticeOutput getNotice(Integer userId, Integer testId);
 
-	String essayScoring(List<EssayScoringRequest> essayScoringRequestList, String testName, Integer userId);
+	String essayScoring(List<EssayScoringRequest> essayScoringRequestList, Integer test_id, Integer userId);
 
-	String getMultipleChoiceScores(Integer id, String testName);
+	String getMultipleChoiceScores( Integer test_id);
 
-	String getMarkOnTotalQuestion(String testName);
+	String getMarkOnTotalQuestion(Integer test_id);
 
-	String getEssayScoreResults(String testName);
+	String getEssayScoreResults(Integer test_id);
 }
 

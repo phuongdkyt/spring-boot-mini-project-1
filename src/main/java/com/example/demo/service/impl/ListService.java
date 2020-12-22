@@ -8,6 +8,7 @@ import com.example.demo.entity.bo.ResponseEntityBO;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.TestRepository;
 import com.example.demo.service.IListService;
+import com.example.demo.service.ITaskService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,9 @@ public class ListService implements IListService {
 	TestRepository testRepository;
 	@Autowired
 	TaskRepository taskRepository;
+	@Autowired
+	ITaskService taskService;
+
 
 	@Override
 	public ResponseEntity<?> findAllByUserId(Integer userId) {
@@ -54,8 +58,8 @@ public class ListService implements IListService {
 		timeStamp = Common.getTimeStamp();
 		result = new HashMap<String, Object>();
 		try {
-			Long scoreEssay = taskRepository.getMarkOnTotalQuestion(testId, "TL", Common.getUserId());
-			Long scoreMultipleChoice = taskRepository.getMarkOnTotalQuestion(testId, "TN", Common.getUserId());
+			String scoreEssay = taskService.getEssayScoreResults(testId);
+			String scoreMultipleChoice = taskService.getMultipleChoiceScores(testId);
 
 			if (Common.isNullOrEmpty(scoreEssay) && Common.isNullOrEmpty(scoreMultipleChoice)) {
 				response = new BaseMessage(Constants.ERROR_RESPONSE, "Bạn chưa làm bài thi!", timeStamp);

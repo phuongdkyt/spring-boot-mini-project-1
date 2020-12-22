@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.common.Common;
 import com.example.demo.common.Constants;
 import com.example.demo.entity.*;
 import com.example.demo.payload.request.EssayScoringRequest;
@@ -30,7 +31,7 @@ public class TaskService implements ITaskService {
 	UserPrincipal userPrincipal;
 
 	@Override
-	public String sendAnswer(List<QuestionEntity> questionEntityList, String testName) {
+	public String sendAnswer(List<QuestionEntity> questionEntityList, Integer test_id) {
 		userPrincipal =
 				(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		// Tìm kiếm người dùng theo id
@@ -38,16 +39,16 @@ public class TaskService implements ITaskService {
 		System.out.println(userPrincipal.getId());
 		System.out.println(userEntity.get().getId());
 		//tim kiem ten bai thi
-		TestEntity testEntity = testRepository.findByTestName(testName);
+		Optional<TestEntity> testEntity = testRepository.findById(test_id);
 		//tim kiem theo id bai thi
-		List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
+		List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(test_id);
 
 		for (int i = 0; i < questionTestEntityList.size(); i++) {
 			TaskEntity taskEntity = new TaskEntity();
 			taskEntity.setTaskAwnser(questionEntityList.get(i).getAnswer());
 			taskEntity.setQuestionTest(questionTestEntityList.get(i));
 			taskEntity.setUser(userEntity.get());
-			taskEntity.setTest(testEntity);
+			taskEntity.setTest(testEntity.get());
 			taskRepository.save(taskEntity);
 		}
 		return "ok";
@@ -72,23 +73,22 @@ public class TaskService implements ITaskService {
 		return reponse;
 	}
 
-	public String getMarkOnTotalQuestion(String testName) {
+	public String getMarkOnTotalQuestion(Integer test_id) {
 		userPrincipal =
 				(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		int id = userPrincipal.getId();
-		TestEntity testEntity = testRepository.findByTestName(testName);
-		Long result = taskRepository.getMarkOnTotalQuestion(id, Constants.TN, testEntity.getId());
-		Long totalResult = taskRepository.getTotalQuestion(id, Constants.TN, testEntity.getId());
+
+		Long result = taskRepository.getMarkOnTotalQuestion(id, Constants.TN, test_id);
+		Long totalResult = taskRepository.getTotalQuestion(id, Constants.TN, test_id);
 		return result + "/" + totalResult;
 	}
 
 	//cham diem tu luan
-	public String essayScoring(List<EssayScoringRequest> essayScoringRequestList, String testName, Integer userId) {
+	public String essayScoring(List<EssayScoringRequest> essayScoringRequestList, Integer test_id, Integer userId) {
 //        Optional<UserEntity> userEntity=userRepository.findById(1);
 
-		TestEntity testEntity = testRepository.findByTestName(testName);
 		//tim kiem theo bai test so 1
-		List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
+		List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(test_id);
 		for (int i = 0; i < questionTestEntityList.size(); i++) {
 			if (questionTestEntityList.get(i).getQuestion().getQuestionType().equals(Constants.TL)) {
 				for (int j = 0; j < essayScoringRequestList.size(); j++) {
@@ -106,53 +106,57 @@ public class TaskService implements ITaskService {
 
 	//lay diem trac nhiem
 	@Override
-	public String getMultipleChoiceScores(Integer id, String testName) {
+	public String getMultipleChoiceScores(Integer test_id) {
 		userPrincipal =
 				(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		try {
+			List<TaskEntity> taskEntityList = taskRepository.findAllByTest_IdAndUser_Id(test_id, Common.getUserId());
+			List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(test_id);
 
-		TestEntity testEntity = testRepository.findByTestName(testName);
-		List<TaskEntity> taskEntityList = taskRepository.findAllByTest_IdAndUser_Id(testEntity.getId(), id);
-		List<QuestionTestEntity> questionTestEntityList = questionTestRepository.findAllByTest_Id(testEntity.getId());
+			int size = questionTestEntityList.size();
 
-		int size = questionTestEntityList.size();
+			for (int i = 0; i < questionTestEntityList.size(); i++) {
+				if (questionTestEntityList.get(i).getQuestion().getQuestionType().equals(Constants.TN)) {
+					for (int j = 0; j < questionTestEntityList.size(); j++) {
 
-		for (int i = 0; i < questionTestEntityList.size(); i++) {
-			if (questionTestEntityList.get(i).getQuestion().getQuestionType().equals(Constants.TN)) {
-				for (int j = 0; j < questionTestEntityList.size(); j++) {
-
-					if (taskEntityList.get(i).getQuestionTest().getQuestion().getId() == questionTestEntityList.get(j).getQuestion().getId()) {
-						if (taskEntityList.get(i).getTaskAwnser().equals(questionTestEntityList.get(j).getQuestion().getAnswer())) {
-							TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(), id);
-							taskEntity.setMark(1.0);
-							taskRepository.save(taskEntity);
-							break;
-						}
-						if (!taskEntityList.get(i).getTaskAwnser().equals(questionTestEntityList.get(j).getQuestion().getAnswer())) {
-							TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(), id);
-							taskEntity.setMark(0.0);
-							taskRepository.save(taskEntity);
-							break;
+						if (taskEntityList.get(i).getQuestionTest().getQuestion().getId() == questionTestEntityList.get(j).getQuestion().getId()) {
+							if (taskEntityList.get(i).getTaskAwnser().equals(questionTestEntityList.get(j).getQuestion().getAnswer())) {
+								TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(), Common.getUserId());
+								taskEntity.setMark(1.0);
+								taskRepository.save(taskEntity);
+								break;
+							}
+							if (!taskEntityList.get(i).getTaskAwnser().equals(questionTestEntityList.get(j).getQuestion().getAnswer())) {
+								TaskEntity taskEntity = taskRepository.findByQuestionTestIdAndUserId(questionTestEntityList.get(i).getId(), Common.getUserId());
+								taskEntity.setMark(0.0);
+								taskRepository.save(taskEntity);
+								break;
+							}
 						}
 					}
 				}
+
 			}
+		}catch (Exception e){
 
 		}
-		Long result = taskRepository.getMarkOnTotalQuestion(id, Constants.TN, testEntity.getId());
-		Long totalResult = taskRepository.getTotalQuestion(id, Constants.TN, testEntity.getId());
+		Long result = taskRepository.getMarkOnTotalQuestion(Common.getUserId(), Constants.TN, test_id);
+		Long totalResult = taskRepository.getTotalQuestion(Common.getUserId(), Constants.TN, test_id);
+		if(Common.isNullOrEmpty(result)) return null;
 		return result + "/" + totalResult;
 	}
 
 	//lay diem tu luan
 	@Override
-	public String getEssayScoreResults(String testName) {
+	public String getEssayScoreResults(Integer test_id) {
 		userPrincipal =
 				(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		int id = userPrincipal.getId();
-		TestEntity testEntity = testRepository.findByTestName(testName);
+
 //        List<QuestionTestEntity> questionTestEntityList=questionTestRepository.
-		Long scoreResults = taskRepository.getEssayScoreResults(id, Constants.TL, testEntity.getId());
-		Long totalResult = taskRepository.getTotalQuestion(id, Constants.TL, testEntity.getId());
+		Long scoreResults = taskRepository.getEssayScoreResults(id, Constants.TL, test_id);
+		Long totalResult = taskRepository.getTotalQuestion(id, Constants.TL, test_id);
+		if(Common.isNullOrEmpty(scoreResults)) return null;
 		return scoreResults + "/" + totalResult * 10;
 	}
 

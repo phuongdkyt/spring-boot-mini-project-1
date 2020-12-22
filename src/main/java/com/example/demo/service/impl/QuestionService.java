@@ -63,7 +63,7 @@ public class QuestionService implements IQuestionService {
 
 	@Override
 	public void saveAll(List<QuestionEntity> questionEntityList, Character level) {
-		Optional<UserEntity> userEntity = userRepository.findById(1);
+		Optional<UserEntity> userEntity = userRepository.findById(Common.getUserId());
 
 		for (int i = 0; i < questionEntityList.size(); i++) {
 			questionEntityList.get(i).setUser(userEntity.get());
