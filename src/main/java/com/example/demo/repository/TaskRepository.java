@@ -6,11 +6,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 	List<TaskEntity> findAllByUser_Id(Integer id);
 
 	TaskEntity findByQuestionTestId(Integer id);
+	@Query(value = "SELECT      \n" +
+			"T.id,\n" +
+			"T.answer,\n" +
+			"Q.question,\n" +
+			"T.mark\n" +
+			"FROM tbl_users U \n" +
+			"LEFT JOIN tbl_tasks T ON T.user_id=U.id\n" +
+			"LEFT JOIN tbl_test_questions TQ ON TQ.id=T.question_test_id\n" +
+			"LEFT JOIN tbl_questions Q ON Q.id=TQ.question_id\n" +
+			"LEFT JOIN tbl_tests TE ON TE.id = TQ.test_id\n" +
+			"WHERE U.id=:user_id AND Q.question_type='TL' and TE.id=:test_id and (T.mark is null)",nativeQuery = true)
+	   List<Map<String,Object>> findAllByUserAndTest(@Param("user_id")Integer user_id, @Param("test_id") Integer test_id);
 
 	TaskEntity findByQuestionTestIdAndUserId(Integer id1, Integer id2);
 

@@ -132,7 +132,6 @@ public class TestController {
 		timeStamp = Common.getTimeStamp();
 		try {
 			String results = testService.addListQuestionsWithTest(idListQuestion, id);
-
 			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
 			logger.info(Common.createMessageLog(idListQuestion, response, Common.getUserName(), timeStamp, "addListQuestionsWithTest"));
 			return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -145,5 +144,22 @@ public class TestController {
 
 	}
 
+	@GetMapping("/done")
+	public ResponseEntity<?> getAllTestAlready() {
+		timeStamp = Common.getTimeStamp();
+		try {
+			List<TestEntity> results = testService.getAllTestAlready();
+
+			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
+			logger.info(Common.createMessageLog(null, response, Common.getUserName(), timeStamp, "getAllTestAlready"));
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
+			logger.error(Common.createMessageLog(null, response, Common.getUserName(), timeStamp, "getAllTestAlready"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+
+	}
 
 }

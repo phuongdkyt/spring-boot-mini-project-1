@@ -4,6 +4,7 @@ import com.example.demo.common.Common;
 import com.example.demo.common.Constants;
 import com.example.demo.entity.NoticeOutput;
 import com.example.demo.entity.QuestionEntity;
+import com.example.demo.entity.TaskEntity;
 import com.example.demo.entity.bo.BaseMessage;
 import com.example.demo.entity.bo.ResponseEntityBO;
 import com.example.demo.payload.request.EssayScoringRequest;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -36,6 +38,21 @@ public class TaskController {
 		} catch (Exception e) {
 			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
 			logger.error(Common.createMessageLog(questionEntityList, response, Common.getUserName(), timeStamp, "findTaskResutl"));
+		}
+		return response;
+	}
+	@GetMapping("/test/{test_id}/user/{user_id}")
+	public BaseMessage getAllTask(@PathVariable Integer user_id, @PathVariable Integer test_id) {
+		BaseMessage response;
+		long timeStamp = Common.getTimeStamp();
+		try {
+			List<Map<String, Object>> resultTask = taskService.findAllByTask(user_id, test_id);
+			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, resultTask);
+			logger.info(Common.createMessageLog(null, response, Common.getUserName(), timeStamp, "findTaskResutl"));
+
+		} catch (Exception e) {
+			response = new BaseMessage(Constants.ERROR_RESPONSE, e.getMessage(), timeStamp);
+			logger.error(Common.createMessageLog(null, response, Common.getUserName(), timeStamp, "findTaskResutl"));
 		}
 		return response;
 	}
@@ -85,11 +102,11 @@ public class TaskController {
 			String results = taskService.essayScoring(essayScoringRequest, test_id, user_id);
 
 			response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, results);
-			logger.info(Common.createMessageLog(essayScoringRequest, response, Common.getUserName(), timeStamp, "getEssayScoreResults"));
+			logger.info(Common.createMessageLog(essayScoringRequest, response, Common.getUserName(), timeStamp, "essayScoring"));
 
 		} catch (Exception e) {
 			response = new BaseMessage(Constants.ERROR_RESPONSE, "Không xác định", timeStamp);
-			logger.error(Common.createMessageLog(essayScoringRequest, response, Common.getUserName(), timeStamp, "getEssayScoreResults"));
+			logger.error(Common.createMessageLog(essayScoringRequest, response, Common.getUserName(), timeStamp, "essayScoring"));
 		}
 		return response;
 	}

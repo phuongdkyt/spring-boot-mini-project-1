@@ -92,7 +92,7 @@ public class AuthService implements IAuthService {
 			logger.info(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (AuthenticationException e) {
-			response = new BaseMessage(Constants.ERROR_RESPONSE, "Sai mật khẩu nhé các em!!", timeStamp);
+			response = new BaseMessage(Constants.ERROR_RESPONSE, "Sai mật khẩu nhé !", timeStamp);
 			logger.error(Common.createMessageLog(loginRequest, response, null, timeStamp, "login"));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}

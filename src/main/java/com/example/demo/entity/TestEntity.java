@@ -27,11 +27,11 @@ public class TestEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date testDateFinish;
 
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "test")
 	private List<UserTestEntity> userTestEntityList = new ArrayList<>();
 
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "test")
 	private List<QuestionTestEntity> questionTestEntityList = new ArrayList<>();
 

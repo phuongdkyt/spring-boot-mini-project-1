@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -158,6 +159,11 @@ public class TaskService implements ITaskService {
         Long totalResult = taskRepository.getTotalQuestion(id, Constants.TL, test_id);
         if (Common.isNullOrEmpty(scoreResults)) return null;
         return scoreResults + "/" + totalResult * 10;
+    }
+
+    @Override
+    public List<Map<String,Object>> findAllByTask(Integer user_id, Integer test_id) {
+        return taskRepository.findAllByUserAndTest(user_id,test_id);
     }
 
 }

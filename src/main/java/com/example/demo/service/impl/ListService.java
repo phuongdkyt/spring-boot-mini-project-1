@@ -43,7 +43,7 @@ public class ListService implements IListService {
             if (Common.isNullOrEmpty(testEntities)) {
                 response = new BaseMessage(Constants.ERROR_RESPONSE, "Không có lịch thi!", timeStamp);
                 logger.error(Common.createMessageLog(userId, response, Common.getUserName(), timeStamp, "findAllByUserId"));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 response = new ResponseEntityBO<>(Constants.SUCCESS_RESPONSE, "Thành công", timeStamp, testEntities);
                 logger.error(Common.createMessageLog(userId, response, Common.getUserName(), timeStamp, "findAllByUserId"));

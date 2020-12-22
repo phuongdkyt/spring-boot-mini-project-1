@@ -16,5 +16,4 @@ public interface UserTestRepository extends JpaRepository<UserTestEntity, Intege
 	UserTestEntity findByTest_IdAndUser_Id(@Param("user_id") Integer user_id,@Param("test_id")Integer test_id);
 
 
-
 }
